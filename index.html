@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baska — Carreira NBA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="./">
+      <span class="brand-mark">99</span>
+      <span class="brand-text">
+        <span class="brand-name">Baska</span>
+        <span class="brand-tag">Carreira NBA</span>
+      </span>
+    </a>
+    <span class="brand-stripe" aria-hidden="true"></span>
+  </header>
+
+  <main class="app-main">
+    <div id="criacao-personagem"></div>
+
+    <h1 style="display:none;" id="titulo-draft">Draft de Lendas</h1>
+    <p class="subtitulo" style="display:none;" id="subtitulo-draft">Roube 1 atributo de cada lenda até completar os 5 slots</p>
+
+    <div class="trilha" id="trilha" style="display:none;"></div>
+
+    <div id="carta-lenda" style="display:none;"></div>
+
+    <div id="universidade" style="display:none;"></div>
+
+    <div class="historico" id="painel-historico" style="display:none;">
+      <h2>Histórico</h2>
+      <div id="lista-historico"></div>
+    </div>
+  </main>
+
+  <!-- Ordem importa: data.js e engine.js declaram no escopo global,
+       draft.js consome os dois. -->
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+  <script src="progressao.js"></script>
+  <script src="criacaoPersonagem.js"></script>
+  <script src="draft.js"></script>
+  <script src="universidades.js"></script>
+  <script src="escolhaUniversidade.js"></script>
+  <script src="universidade.js"></script>
+  <script src="times.js"></script>
+  <script src="carreira.js"></script>
+  <script src="temporadanba.js"></script>
+  <script src="draftNba.js"></script>
+  <script src="pro.js"></script>
+</body>
+</html>

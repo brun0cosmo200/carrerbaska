@@ -1,0 +1,966 @@
+:root {
+  --nba-blue: #1d428a;
+  --nba-blue-deep: #0c1f4a;
+  --nba-red: #c8102e;
+  --nba-red-hot: #e31837;
+  --nba-white: #ffffff;
+
+  --bg: #050910;
+  --bg-mid: #0a1424;
+  --surface: #0e1829;
+  --surface-2: #132038;
+  --surface-3: #1a2a48;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #f4f6fa;
+  --text-muted: #8b97ad;
+  --amber: var(--nba-red);
+  --amber-dim: #7a1828;
+  --cyan: #7eb6ff;
+  --danger: #ff6b6b;
+  --glow-red: rgba(200, 16, 46, 0.35);
+  --glow-blue: rgba(29, 66, 138, 0.45);
+  --radius: 14px;
+  --radius-lg: 22px;
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: var(--font-body);
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(29, 66, 138, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 85% 80%, rgba(200, 16, 46, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 10% 70%, rgba(29, 66, 138, 0.18) 0%, transparent 45%),
+    linear-gradient(180deg, var(--bg-mid) 0%, var(--bg) 100%);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Court lines — atmosphere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 49.6%, rgba(255, 255, 255, 0.03) 49.6%, rgba(255, 255, 255, 0.03) 50.4%, transparent 50.4%),
+    radial-gradient(circle at 50% 100%, transparent 18%, rgba(255, 255, 255, 0.025) 18.2%, rgba(255, 255, 255, 0.025) 19%, transparent 19.2%);
+  opacity: 0.7;
+  z-index: 0;
+}
+
+/* --- Top brand bar --- */
+.app-header {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 4px 8px;
+  animation: fadeDown 0.6s ease both;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--nba-red) 0%, var(--nba-blue) 100%);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--nba-white);
+  box-shadow: 0 0 24px var(--glow-red);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brand-tag {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brand-stripe {
+  height: 4px;
+  width: 72px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--nba-red), var(--nba-white) 50%, var(--nba-blue));
+}
+
+.app-main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1, h2, .slot-valor, .lenda-nome, .hero-title, .overall {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+h1, .hero-title {
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  margin: 0 0 12px;
+  color: var(--nba-white);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nba-red);
+  margin-bottom: 14px;
+}
+
+.subtitulo, .hero-lead {
+  color: var(--text-muted);
+  margin: 0 0 28px;
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 36ch;
+  text-align: center;
+}
+
+#titulo-draft {
+  color: var(--nba-white);
+  text-align: center;
+  margin-top: 28px;
+}
+
+/* --- Hero criação (estilo Fenômeno) --- */
+.hero-criacao {
+  width: 100%;
+  text-align: center;
+  padding: 36px 0 8px;
+  animation: fadeUp 0.7s ease both;
+}
+
+.hero-criacao .hero-lead {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.painel-form {
+  width: 100%;
+  background: linear-gradient(180deg, rgba(19, 32, 56, 0.92), rgba(10, 20, 36, 0.96));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px 32px;
+  text-align: left;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  animation: fadeUp 0.75s 0.12s ease both;
+}
+
+.painel-form .campo + .campo {
+  margin-top: 20px;
+}
+
+/* --- Trilha de slots --- */
+.trilha {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.slot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-width: 86px;
+  text-align: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+}
+
+.slot.preenchido {
+  border-color: rgba(200, 16, 46, 0.55);
+  box-shadow: 0 0 20px rgba(200, 16, 46, 0.15);
+  transform: translateY(-1px);
+}
+
+.slot-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slot-valor {
+  font-size: 1.55rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.slot.preenchido .slot-valor {
+  color: var(--nba-white);
+}
+
+/* --- Painéis / cartas --- */
+.carta-lenda {
+  background: linear-gradient(165deg, var(--surface-2) 0%, var(--surface) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  animation: entrarCarta 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes entrarCarta {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lenda-posicao {
+  display: inline-block;
+  background: rgba(29, 66, 138, 0.35);
+  border: 1px solid rgba(126, 182, 255, 0.25);
+  color: var(--cyan);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lenda-nome {
+  font-size: clamp(1.8rem, 5vw, 2.35rem);
+  margin: 0 0 22px;
+  color: var(--nba-white);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.opcoes {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.opcao-atributo {
+  flex: 1;
+  min-width: 140px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.opcao-atributo:hover {
+  border-color: var(--nba-red);
+  background: rgba(200, 16, 46, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px var(--glow-red);
+}
+
+.opcao-atributo:active {
+  transform: translateY(-1px);
+}
+
+.opcao-atributo .rotulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.opcao-atributo .valor {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--nba-red);
+  line-height: 1;
+}
+
+.opcao-atributo .perde {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: var(--danger);
+}
+
+/* Chip selectors (posições) */
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.chip:hover {
+  border-color: rgba(126, 182, 255, 0.4);
+  color: var(--text);
+}
+
+.chip.ativo {
+  background: linear-gradient(135deg, var(--nba-blue) 0%, var(--nba-blue-deep) 100%);
+  border-color: transparent;
+  color: var(--nba-white);
+  box-shadow: 0 0 20px var(--glow-blue);
+}
+
+.chip .chip-code {
+  color: var(--nba-red);
+  margin-right: 4px;
+}
+
+.chip.ativo .chip-code {
+  color: #ffb4bf;
+}
+
+/* --- Histórico --- */
+.historico {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.historico h2 {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.historico-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.historico-item b { color: var(--text); }
+
+/* --- Tela final --- */
+.tela-final {
+  text-align: center;
+}
+
+.tela-final .overall {
+  font-size: clamp(3.5rem, 12vw, 5rem);
+  color: var(--nba-red);
+  text-shadow: 0 0 40px var(--glow-red);
+  margin: 8px 0 20px;
+  line-height: 1;
+}
+
+button.acao {
+  margin-top: 20px;
+  background: var(--nba-red);
+  color: var(--nba-white);
+  border: none;
+  border-radius: 999px;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 0 28px var(--glow-red), 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.2s ease;
+  width: 100%;
+  max-width: 320px;
+}
+
+button.acao:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 0 36px var(--glow-red), 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+button.acao:active {
+  transform: translateY(0);
+}
+
+button.acao.secundaria {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
+  box-shadow: none;
+  margin-top: 12px;
+}
+
+button.acao.secundaria:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.3);
+  filter: none;
+  box-shadow: none;
+}
+
+.acoes-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* --- Formulário --- */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nba-white);
+}
+
+.campo .hint {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+  margin-top: -4px;
+}
+
+.campo input,
+.campo select {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo input::placeholder {
+  color: #5c6a82;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+  border-color: var(--nba-blue);
+  box-shadow: 0 0 0 3px rgba(29, 66, 138, 0.35);
+}
+
+.campo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.meta-linha {
+  color: var(--text-muted);
+  margin-top: -14px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.meta-linha.compacta {
+  margin-top: -12px;
+  margin-bottom: 8px;
+}
+
+/* Stats strip na carreira */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin: 8px 0 20px;
+}
+
+.stat-pill {
+  background: rgba(29, 66, 138, 0.25);
+  border: 1px solid rgba(126, 182, 255, 0.15);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.stat-pill .stat-val {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--nba-white);
+  line-height: 1;
+}
+
+.stat-pill .stat-lab {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Universidades: escolha e carreira --- */
+.carta-escolha-uni {
+  max-width: 560px;
+}
+
+.lista-universidades {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+}
+
+.uni-opcao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.uni-opcao:hover {
+  border-color: var(--nba-red);
+  background: rgba(200, 16, 46, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--glow-red);
+}
+
+.uni-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.uni-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.uni-tier {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.uni-nome {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--nba-white);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.uni-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.uni-carreira-topo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.uni-logo-grande {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 10px;
+}
+
+.uni-carreira-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.uni-carreira-info .lenda-nome {
+  margin-bottom: 6px;
+}
+
+.uni-carreira-info .lenda-posicao {
+  margin-bottom: 8px;
+}
+
+.uni-carreira-meta {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* --- Time NBA: draft e carreira --- */
+.draft-time-destaque {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: left;
+  margin: 16px 0 8px;
+  width: 100%;
+}
+
+.time-logo-draft {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 10px;
+  display: block;
+}
+
+.draft-time-label {
+  margin: 0 0 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nba-red);
+}
+
+.draft-time-nome {
+  margin-bottom: 4px !important;
+  font-size: clamp(1.4rem, 4vw, 1.9rem) !important;
+}
+
+/* --- Resumo de temporada: prêmios, tabela, draft --- */
+.premios-liga {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.premio-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(29, 66, 138, 0.22);
+  border: 1px solid rgba(126, 182, 255, 0.15);
+  border-radius: 14px;
+}
+
+.premio-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.premio-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nba-red);
+}
+
+.premio-nome {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--nba-white);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.premio-sub {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.mini-tabela,
+.draft-anual {
+  margin-top: 16px;
+}
+
+.mini-tabela-linha,
+.draft-pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.mini-pos,
+.draft-pick-num {
+  width: 28px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mini-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mini-nome {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-rec {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.draft-anual-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabelas-conferencia {
+  margin-top: 16px;
+}
+
+.conf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.conf-titulo {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-family: var(--font-body);
+}
+
+.premio-card-duplo {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.premio-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.premio-nome-sm {
+  font-size: 0.95rem !important;
+}
+
+.fora-playoff {
+  opacity: 0.45;
+}
+
+.offseason-box {
+  margin: 8px 0 20px;
+  text-align: left;
+  padding: 16px;
+  background: rgba(200, 16, 46, 0.08);
+  border: 1px solid rgba(200, 16, 46, 0.22);
+  border-radius: 16px;
+}
+
+.offseason-box h2 {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nba-red);
+  font-family: var(--font-body);
+}
+
+.evento-msg {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.evento-msg.ok { color: var(--cyan); }
+.evento-msg.erro { color: var(--danger); }
+
+.trade-resultado {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.trade-fluxo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 10px 0;
+}
+
+.trade-seta {
+  font-size: 1.4rem;
+  color: var(--nba-red);
+  font-weight: 700;
+}
+
+.historico-times {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.historico-times h2 {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  margin-bottom: 10px;
+}
+
+.historico-times-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 480px) {
+  .painel-form { padding: 22px 16px 26px; }
+  .carta-lenda { padding: 22px 16px; }
+  .opcao-atributo { min-width: 100%; }
+  .campo-row { grid-template-columns: 1fr; }
+  .chip { flex: 1 1 calc(50% - 8px); text-align: center; }
+  .uni-carreira-topo { gap: 12px; }
+  .uni-logo-grande { width: 72px; height: 72px; }
+  .uni-logo { width: 48px; height: 48px; }
+  .draft-time-destaque { flex-direction: column; text-align: center; gap: 12px; }
+  .draft-time-destaque > div { text-align: center; }
+  .time-logo-draft { width: 80px; height: 80px; }
+  .conf-grid { grid-template-columns: 1fr; }
+}
