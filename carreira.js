@@ -59,6 +59,18 @@ function initCarreiraPro(jogador) {
   }
   if (!jogador.historicoPremios) jogador.historicoPremios = [];
   if (!jogador.historicoLesoes) jogador.historicoLesoes = [];
+  if (jogador.reputacao === undefined) jogador.reputacao = 50;
+  if (jogador.confiancaTecnico === undefined) jogador.confiancaTecnico = 50;
+  if (jogador.apoioTorcida === undefined) jogador.apoioTorcida = 50;
+  if (jogador.impulsoTitular === undefined) jogador.impulsoTitular = 0;
+  if (jogador.penalidadeMinutos === undefined) jogador.penalidadeMinutos = 0;
+  if (jogador.pressao === undefined) jogador.pressao = 0;
+  if (jogador.energia === undefined) jogador.energia = 75;
+  if (jogador.interesseMercado === undefined) jogador.interesseMercado = 0;
+  if (!jogador.historicoDecisoes) jogador.historicoDecisoes = [];
+  if (!jogador.estatisticasCarreira) {
+    jogador.estatisticasCarreira = { jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 };
+  }
   if (!jogador.papel) jogador.papel = sugerirPapel(jogador);
   if (!jogador.contrato) {
     jogador.contrato = {
@@ -73,7 +85,14 @@ function initCarreiraPro(jogador) {
 function sugerirPapel(jogador) {
   if (!jogador.time || jogador.contexto !== "nba") return "titular";
   const overallNorm = normalizarOverallParaForca(overallDe(jogador.atual));
-  const gap = overallNorm - jogador.time.forca;
+  const encaixe = jogador.time && global.CB && global.CB.encaixeJogadorNoTime
+    ? global.CB.encaixeJogadorNoTime(jogador, jogador.time).total
+    : 0;
+  // A confiança do técnico desloca a disputa por minutos: boa leitura
+  // coletiva abre espaço mesmo para quem ainda está abaixo do overall do time.
+  const gap = overallNorm - jogador.time.forca + encaixe +
+    (jogador.confiancaTecnico - 50) * 0.15 +
+    (jogador.impulsoTitular || 0) * 0.8 - (jogador.penalidadeMinutos || 0) * 4;
   if (gap >= -4) return "titular";
   if (gap >= -11) return "sexto";
   return "banco";
@@ -193,25 +212,14 @@ function avaliarPremiosIndividuais(jogador, relatorio) {
     }
   }
 
-  // DPOY
-  const defImpact = impactoDefensivo(jogador, medias);
-  if (defImpact >= 55 && Math.random() < Math.min(0.45, (defImpact - 50) / 40)) {
-    out.dpoy = true;
-  }
-
-  // Sixth Man
-  if (papel === "sexto" && impacto >= 24 && Math.random() < 0.4) {
-    out.sixthMan = true;
-  }
-
-  // ROY — primeira temporada NBA
-  if (jogador.temporadasNba === 1 && impacto >= 20 && Math.random() < 0.55) {
-    out.roy = true;
-  }
-
-  // MVP do jogador (se o prêmio da liga for ele)
-  if (relatorio.premios && relatorio.premios.mvpDaLiga === jogador.nome) {
-    out.mvp = true;
+  // Prêmios únicos da liga: a carreira só registra o que a classificação
+  // exibida pela própria temporada já definiu. Isso impede vencedores
+  // diferentes entre o painel de prêmios e o histórico do jogador.
+  if (relatorio.premios) {
+    out.mvp = relatorio.premios.mvpDaLiga === jogador.nome;
+    out.dpoy = relatorio.premios.dpoyDaLiga === jogador.nome;
+    out.sixthMan = relatorio.premios.sextoHomemDaLiga === jogador.nome;
+    out.roy = relatorio.premios.novatoDoAno === jogador.nome;
   }
 
   if (relatorio.playoffs && relatorio.playoffs.campeao) {

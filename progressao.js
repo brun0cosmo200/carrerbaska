@@ -71,6 +71,7 @@ function simularDesempenho(jogador) {
   const variacao = (Math.random() - 0.5) * 30; // +-15 de sorte/azar
 
   let penalidadeTime = 0;
+  let ajusteEnergia = 0;
   if (jogador.contexto === "nba" && jogador.time) {
     const mediaAtualNorm =
       global.CB && global.CB.normalizarOverallParaForca
@@ -78,9 +79,10 @@ function simularDesempenho(jogador) {
         : mediaAtual;
     const diferenca = jogador.time.forca - mediaAtualNorm;
     penalidadeTime = Math.max(0, diferenca) * 0.5;
+    ajusteEnergia = ((jogador.energia === undefined ? 75 : jogador.energia) - 75) * 0.2;
   }
 
-  return Math.max(0, Math.min(100, Math.round(mediaAtual + variacao - penalidadeTime)));
+  return Math.max(0, Math.min(100, Math.round(mediaAtual + variacao - penalidadeTime + ajusteEnergia)));
 }
 
 // Aplica a progressão de uma temporada: calcula desempenho, aplica
@@ -98,7 +100,10 @@ function progredirTemporada(jogador, desempenhoForcado) {
   const crescimentos = {};
   ATRIBUTOS.forEach((attr) => {
     const antes = jogador.atual[attr];
-    const depois = Math.max(0, Math.min(jogador.potencial[attr], antes + delta));
+    // O plano escolhido antes da temporada concentra parte do trabalho em
+    // uma habilidade. Há ganho real, mas o teto do draft continua valendo.
+    const bonusFoco = jogador.planoTemporada && jogador.planoTemporada.foco === attr ? 2 : 0;
+    const depois = Math.max(0, Math.min(jogador.potencial[attr], antes + delta + bonusFoco));
     jogador.atual[attr] = Math.round(depois);
     crescimentos[attr] = jogador.atual[attr] - antes;
   });
