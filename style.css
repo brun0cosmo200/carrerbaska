@@ -1093,12 +1093,61 @@ button.acao.secundaria:hover {
   .calendario-mensal { grid-template-columns:repeat(3,1fr); }.corrida-premios { grid-template-columns:repeat(2,1fr); }.metricas-time { grid-template-columns:1fr; }
 }
 
+/* Celular: a tela continua sendo uma experiência vertical legível. A chave de
+   playoffs mantém sua própria rolagem horizontal, mas a página e a simulação
+   não forçam mais uma largura de desktop. */
 @media (max-width: 760px) {
+  body { padding: 0 12px 48px; }
+  .app-header { padding: 14px 0 8px; }
+  .brand { gap: 8px; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 9px; font-size: 1rem; }
+  .brand-name { font-size: 1.12rem; }
+  .brand-tag { font-size: .58rem; }
+  .brand-stripe { width: 44px; height: 3px; }
+
+  .app-main,
   body:has(#carreira-pro.modo-simulacao) .app-main,
-  body:has(#carreira-pro.modo-simulacao) .app-header { max-width: 920px; }
-  body:has(#carreira-pro.modo-simulacao) { align-items: flex-start; overflow-x: auto; }
-  body:has(#carreira-pro.modo-simulacao) .app-main { min-width: 920px; }
-  .simulacao-temporada { min-height: 600px; }
-  .sim-layout { grid-template-columns: minmax(480px, 1.35fr) minmax(330px, .85fr); }
-  .sim-painel-lateral { max-height: 430px; }
+  body:has(#carreira-pro.modo-simulacao) .app-header { max-width: 100%; }
+  body:has(#carreira-pro.modo-simulacao) { align-items: center; overflow-x: hidden; }
+  body:has(#carreira-pro.modo-simulacao) .app-main { min-width: 0; }
+
+  h1, .hero-title { font-size: clamp(2.15rem, 12vw, 3rem); }
+  .hero-criacao { padding: 30px 0 14px; }
+  .hero-lead, .subtitulo { margin-bottom: 20px; font-size: .92rem; line-height: 1.45; }
+  .carta-lenda, .painel-form { border-radius: 18px; }
+  .stats-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trilha { gap: 6px; margin: 14px 0 18px; }
+  .slot { min-width: calc(33.333% - 6px); padding: 8px 6px; }
+  .slot-valor { font-size: 1.25rem; }
+  .contexto-time { grid-template-columns: 1fr; }
+
+  .nav-carreira { margin: 0 0 14px; padding: 5px; }
+  .nav-carreira-item { flex-basis: 112px; min-height: 36px; padding: 8px 10px; font-size: .66rem; }
+
+  .simulacao-temporada { width: 100%; min-height: 0; padding: 20px 14px; }
+  .sim-layout { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 14px; }
+  .sim-painel-principal { padding: 0; }
+  .sim-painel-lateral { max-height: 280px; padding: 12px; }
+  .sim-campanha { margin: 18px 0 10px; }
+  .sim-campanha strong { font-size: 1.9rem; }
+  .sim-placar { margin: 20px 0 10px; }
+  .sim-placar strong { font-size: 2rem; }
+  .sim-logo { width: 38px; height: 38px; }
+  .sim-ultimos { margin: 16px 0; }
+
+  .gestao-temporada { padding: 18px 14px; }
+  .gestao-cabecalho { align-items: flex-start; gap: 10px; }
+  .gestao-cabecalho h2 { font-size: 1.7rem; }
+  .calendario-mensal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metricas-time, .comparacao-posicao, .corrida-premios { grid-template-columns: 1fr; }
+  .chave-wrapper { margin-inline: -14px; padding-inline: 14px; }
+}
+
+@media (max-width: 480px) {
+  .slot { min-width: calc(50% - 6px); }
+  .sim-placar { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); gap: 4px; }
+  .sim-placar > div { font-size: .64rem; }
+  .sim-placar strong { font-size: 1.8rem; }
+  .sim-x { font-size: 1rem; }
+  .sim-painel-lateral { max-height: 250px; }
 }
