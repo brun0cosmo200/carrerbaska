@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="corners"><rect width="64" height="64" rx="10"/></clipPath>
+  </defs>
+  <g clip-path="url(#corners)">
+    <path fill="#1d428a" d="M0 0h64v64H0z"/>
+    <path fill="#c8102e" d="M64 0v64H0z"/>
+  </g>
+  <g fill="#fff" fill-rule="evenodd">
+    <path d="M17 17h10l5 5v24l-5 5H16v-7h9v-9h-8l-4-4V22zm3 7v5h5v-5z"/>
+    <path d="M39 17h10l5 5v24l-5 5H38v-7h9v-9h-8l-4-4V22zm3 7v5h5v-5z"/>
+  </g>
+</svg>
