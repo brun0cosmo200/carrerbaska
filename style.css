@@ -204,6 +204,22 @@ h1, .hero-title {
   margin-right: auto;
 }
 
+/* A abertura é uma cena: a foto faz parte do universo do jogo, não um
+   wallpaper atrás de texto. A moldura, a luz e o gradiente integram a
+   passagem de vestiário ao formulário de criação. */
+.hero-criacao { position:relative; overflow:visible; }
+.hero-criacao-copy { position:relative; z-index:2; }
+.hero-cena { position:relative; isolation:isolate; overflow:hidden; width:min(100%, 430px); height:245px; margin:26px auto 0; border:1px solid rgba(154,198,255,.24); border-radius:22px; background:#05080e; box-shadow:0 20px 46px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.1); }
+.hero-cena::before { content:""; position:absolute; z-index:1; inset:0; background:linear-gradient(90deg,rgba(5,9,20,.02) 28%,rgba(5,9,20,.3) 62%,rgba(5,9,20,.94)),linear-gradient(0deg,rgba(5,9,20,.94),transparent 58%); pointer-events:none; }
+.hero-cena::after { content:""; position:absolute; z-index:3; inset:0; border-radius:inherit; box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),inset 0 -36px 52px rgba(0,0,0,.65); pointer-events:none; }
+.hero-cena img { width:100%; height:100%; display:block; object-fit:cover; object-position:center 35%; filter:saturate(.88) contrast(1.12) brightness(.8); transform:scale(1.06); transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .5s ease; }
+.hero-cena:hover img { transform:scale(1.13); filter:saturate(1) contrast(1.08) brightness(.92); }
+.hero-cena-luz { position:absolute; z-index:2; width:190px; height:190px; top:-95px; left:-45px; border-radius:50%; background:radial-gradient(circle,rgba(154,198,255,.52),rgba(154,198,255,.08) 38%,transparent 71%); mix-blend-mode:screen; pointer-events:none; animation:luzAbertura 5s ease-in-out infinite; }
+.hero-cena figcaption { position:absolute; z-index:4; left:18px; right:18px; bottom:16px; display:grid; gap:3px; color:#fff; text-align:left; text-shadow:0 2px 12px #000; }
+.hero-cena figcaption b { color:var(--amber); font:.87rem var(--font-display); letter-spacing:.08em; }
+.hero-cena figcaption span { color:#d7e3f6; font-size:.72rem; letter-spacing:.02em; }
+@keyframes luzAbertura { 0%,100%{transform:translate3d(0,0,0);opacity:.72}50%{transform:translate3d(20px,14px,0);opacity:1} }
+
 .painel-form {
   width: 100%;
   max-width: 960px;
@@ -458,6 +474,23 @@ h1, .hero-title {
   line-height: 1;
 }
 
+/* Uma carreira de Fenômeno merece parecer um pôster de grandeza, não apenas
+   a mesma carta com um texto diferente. */
+.carta-fenomeno { background:radial-gradient(circle at 18% 0,rgba(255,71,71,.38),transparent 34%),radial-gradient(circle at 82% 100%,rgba(200,16,46,.31),transparent 42%),linear-gradient(145deg,#31040b,#080306 72%) !important; border-color:rgba(255,95,95,.72) !important; box-shadow:0 0 0 1px rgba(255,70,70,.15),0 28px 90px rgba(150,0,18,.46),inset 0 1px 0 rgba(255,255,255,.18) !important; }
+.carta-fenomeno::after { content:"FENÔMENO"; position:absolute; right:-.02em; top:.07em; z-index:-1; font-family:Impact, sans-serif; font-size:clamp(4rem,16vw,13rem); color:rgba(255,91,91,.07); letter-spacing:.03em; pointer-events:none; }
+.overlay-rival { position:relative; isolation:isolate; overflow:hidden; min-height:70vh; display:grid; place-items:center; padding:28px; background:#03050a; }
+.rival-times-fundo { position:absolute; inset:0; z-index:-1; display:grid; grid-template-columns:1fr 1fr; pointer-events:none; }
+.rival-time-fundo { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; min-width:0; background:radial-gradient(ellipse at center,color-mix(in srgb,var(--neon) 65%,transparent),transparent 72%); }
+.rival-time-fundo::before { content:""; position:absolute; inset:8% 12%; border-radius:50%; box-shadow:0 0 90px 30px color-mix(in srgb,var(--neon) 35%,transparent),inset 0 0 70px color-mix(in srgb,var(--neon-secundario) 25%,transparent); }
+.rival-time-fundo img { width:85%; max-width:520px; height:clamp(200px,32vw,460px); object-fit:contain; opacity:.55; filter:drop-shadow(0 0 24px var(--neon)) drop-shadow(0 0 48px var(--neon-secundario)); }
+.rival-time-fundo strong { max-width:90%; color:#fff; opacity:.6; font-size:clamp(.7rem,1.5vw,1.3rem); text-transform:uppercase; letter-spacing:.14em; text-align:center; text-shadow:0 0 18px var(--neon); }
+.cena-rival { width:min(760px,100%); padding:clamp(28px,6vw,72px); text-align:center; border:1px solid rgba(255,255,255,.18); background:linear-gradient(90deg,rgba(3,5,10,.38),rgba(3,5,10,.86) 35%,rgba(3,5,10,.86) 65%,rgba(3,5,10,.38)); box-shadow:0 24px 80px #0006; text-shadow:0 2px 12px #000; }
+@media (max-width:560px) { .rival-time-fundo { justify-content:flex-start; padding-top:65px; }.rival-time-fundo img { width:100%; height:210px; opacity:.45; }.rival-time-fundo strong { font-size:.65rem; letter-spacing:.06em; }.rival-time-fundo::before { inset:6% 4% 40%; } }
+.cena-rival>span { color:var(--amber); letter-spacing:.15em; font-size:.76rem; }.cena-rival h2 { font-size:clamp(2.2rem,6vw,5rem); margin:.35em 0; }.cena-rival h2 i { color:#c8102e; font-style:normal; }.cena-rival p { max-width:56ch; margin:18px auto; color:#d5d9e2; }.rival-placar { display:flex; align-items:center; justify-content:center; gap:clamp(14px,4vw,42px); margin:30px 0; }.rival-placar b { font-size:1.15rem; }.rival-placar small { color:#9aa5b7; font-size:.8rem; }.rival-placar em { color:#c8102e; font-style:normal; font-weight:900; letter-spacing:.12em; }.rival-fala { font-style:italic; color:#ffced2 !important; }
+.rival-comparacao { display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center; margin:18px 0; }.rival-comparacao article { padding:18px; border:1px solid var(--border); background:#090c12; }.rival-comparacao article span,.rival-comparacao article small { display:block; color:var(--text-muted); }.rival-comparacao article b { display:block; margin:5px 0; font-size:2rem; color:var(--amber); }.rival-comparacao>strong { color:#c8102e; font-size:1.25rem; white-space:nowrap; }
+@media (max-width:560px) { .overlay-rival{padding:12px}.cena-rival{padding:30px 18px}.rival-comparacao{grid-template-columns:1fr;}.rival-comparacao>strong{order:-1;text-align:center;} }
+
+
 button.acao {
   margin-top: 20px;
   background: var(--nba-red);
@@ -500,6 +533,9 @@ button.acao.secundaria:hover {
   filter: none;
   box-shadow: none;
 }
+
+.importar-save { display: block; width: 100%; max-width: 320px; margin-top: 12px; padding: 14px 28px; border: 1px solid var(--border-strong); border-radius: 999px; color: var(--text-muted); font-size: .95rem; font-weight: 700; text-align: center; cursor: pointer; }
+.importar-save:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
 
 .acoes-stack {
   display: flex;
@@ -976,7 +1012,7 @@ button.acao.secundaria:hover {
 
 .contexto-time { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 0 22px; text-align: left; }.contexto-time > div { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.025); }.contexto-time span { display:block; color: var(--text-muted); font-size:.58rem; font-weight:700; letter-spacing:.1em; }.contexto-time strong { display:block; margin-top:4px; color:var(--text); font-size:.73rem; line-height:1.25; }.contexto-time strong.positivo { color:var(--cyan); }.contexto-time strong.negativo { color:var(--danger); }
 .historico-liga { margin:0 0 20px; padding:14px; border:1px solid var(--border); border-radius:14px; text-align:left; }.historico-liga h2 { margin:0 0 8px; color:var(--text-muted); font:700 .68rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }.historico-liga-item { display:grid; grid-template-columns:30px 28px minmax(0,1fr) minmax(110px,.7fr); gap:8px; align-items:center; padding:8px 0; border-top:1px solid var(--border); }.historico-liga-ano { color:var(--cyan); font-weight:700; font-size:.72rem; }.historico-liga-item strong,.historico-liga-item small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.historico-liga-item strong { font-size:.78rem; }.historico-liga-item small,.historico-liga-draft { color:var(--text-muted); font-size:.66rem; }.historico-liga-draft { text-align:right; }
-.elencos-liga { margin:0 0 20px; padding:14px; border:1px solid var(--border); border-radius:14px; text-align:left; }.elencos-liga h2,.recordes-carreira h2 { margin:0 0 10px; color:var(--text-muted); font:700 .68rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }.seletor-times { display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; }.time-seletor { flex:0 0 auto; width:34px; height:34px; padding:4px; border:1px solid var(--border); border-radius:8px; background:var(--surface); cursor:pointer; }.time-seletor.ativo { border-color:var(--cyan); background:rgba(126,182,255,.12); }.time-seletor img { width:100%; height:100%; object-fit:contain; }.elenco-cabecalho,.elenco-linha { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:8px; align-items:center; padding:8px 0; border-top:1px solid var(--border); }.elenco-cabecalho strong,.elenco-linha span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.78rem; }.elenco-cabecalho span,.elenco-linha strong { color:var(--text-muted); font-size:.68rem; }.recordes-carreira { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin:0 0 20px; padding:14px; border:1px solid var(--border); border-radius:14px; text-align:center; }.recordes-carreira h2 { grid-column:1/-1; text-align:left; }.recordes-carreira div { padding:8px; background:rgba(255,255,255,.03); border-radius:8px; }.recordes-carreira span,.recordes-carreira strong { display:block; }.recordes-carreira span { color:var(--text-muted); font-size:.6rem; text-transform:uppercase; }.recordes-carreira strong { margin-top:3px; font-family:var(--font-display); font-size:1.1rem; }
+.elencos-liga { margin:0 0 20px; padding:14px; border:1px solid var(--border); border-radius:14px; text-align:left; }.elencos-liga h2,.recordes-carreira h2 { margin:0 0 10px; color:var(--text-muted); font:700 .68rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }.seletor-times { display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; }.time-seletor { flex:0 0 auto; width:34px; height:34px; padding:4px; border:1px solid var(--border); border-radius:8px; background:var(--surface); cursor:pointer; }.time-seletor.ativo { border-color:var(--cyan); background:rgba(126,182,255,.12); }.time-seletor img { width:100%; height:100%; object-fit:contain; }.elenco-cabecalho,.elenco-linha { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:8px; align-items:center; padding:8px 0; border-top:1px solid var(--border); }.elenco-cabecalho strong,.elenco-linha span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.78rem; }.elenco-cabecalho span,.elenco-linha strong { color:var(--text-muted); font-size:.68rem; }.elenco-linha.usuario { margin:2px -6px; padding:8px 6px; border:1px solid rgba(126,182,255,.55); border-radius:8px; background:rgba(126,182,255,.10); }.elenco-linha.usuario span { color:var(--cyan); font-weight:700; }.recordes-carreira { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin:0 0 20px; padding:14px; border:1px solid var(--border); border-radius:14px; text-align:center; }.recordes-carreira h2 { grid-column:1/-1; text-align:left; }.recordes-carreira div { padding:8px; background:rgba(255,255,255,.03); border-radius:8px; }.recordes-carreira span,.recordes-carreira strong { display:block; }.recordes-carreira span { color:var(--text-muted); font-size:.6rem; text-transform:uppercase; }.recordes-carreira strong { margin-top:3px; font-family:var(--font-display); font-size:1.1rem; }
 
 /* Navegação interna: cada bloco grande da carreira ganha sua própria página,
    evitando que tabela, prêmios e elencos virem uma sequência interminável. */
@@ -994,7 +1030,7 @@ button.acao.secundaria:hover {
 
 /* Central estratégica da temporada */
 .gestao-temporada { margin:18px 0; text-align:left; }.gestao-temporada > h2,.corrida-premios > h2,.chave-playoffs > h2 { margin:0 0 10px; color:var(--text-muted); font:700 .68rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }.calendario-mensal { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-bottom:14px; }.mes-temporada { padding:10px 7px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.025); text-align:center; }.mes-temporada strong,.mes-temporada span,.mes-temporada small,.mes-temporada i { display:block; }.mes-temporada strong { color:var(--cyan); font-size:.7rem; }.mes-temporada span { margin:3px 0; font-family:var(--font-display); font-size:1.2rem; }.mes-temporada small { color:var(--text-muted); font-size:.58rem; }.mes-temporada i { margin-top:5px; color:var(--text); font-size:.6rem; font-style:normal; letter-spacing:.08em; }.metricas-time { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 0 14px; }.metricas-time div { padding:12px; border:1px solid var(--border); border-radius:11px; background:rgba(29,66,138,.12); }.metricas-time span,.metricas-time strong,.metricas-time small { display:block; }.metricas-time span { color:var(--text-muted); font-size:.6rem; font-weight:700; letter-spacing:.1em; }.metricas-time strong { margin:3px 0; font:1.7rem var(--font-display); }.metricas-time small { color:var(--cyan); font-size:.66rem; }.comparacao-posicao { padding:14px; margin-bottom:14px; border:1px solid var(--border); border-radius:12px; }.comparacao-posicao h3 { margin:0; color:var(--text-muted); font:700 .67rem var(--font-body); letter-spacing:.1em; text-transform:uppercase; }.comparacao-posicao p { margin:7px 0; color:var(--text-muted); font-size:.78rem; }.comparacao-posicao p b { color:var(--text); }.comparacao-posicao > div { display:flex; flex-wrap:wrap; gap:6px; }.comparacao-posicao span { padding:6px 8px; border-radius:7px; background:rgba(255,255,255,.04); color:var(--text-muted); font-size:.68rem; }.comparacao-posicao span.voce { color:var(--text); border:1px solid var(--cyan); background:rgba(126,182,255,.12); }.comparacao-posicao b { color:var(--cyan); font-weight:500; }.corrida-premios { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 14px; }.corrida-premios > h2 { grid-column:1/-1; }.corrida-premio { padding:10px; border:1px solid var(--border); border-radius:11px; }.corrida-premio h3 { margin:0 0 7px; color:var(--cyan); font:700 .65rem var(--font-body); letter-spacing:.1em; }.corrida-premio div { display:grid; grid-template-columns:18px 20px minmax(0,1fr); gap:5px; align-items:center; padding:4px 0; font-size:.67rem; }.corrida-premio div b { color:var(--text-muted); }.chave-playoffs { padding:14px; border:1px solid var(--border); border-radius:12px; overflow-x:auto; }.chave-grade { display:grid; grid-template-columns:repeat(4,minmax(170px,1fr)); gap:10px; }.chave-coluna h3 { margin:0 0 7px; color:var(--cyan); font:700 .63rem var(--font-body); letter-spacing:.08em; }.chave-coluna > p { color:var(--text-muted); font-size:.7rem; }.chave-serie { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:3px 6px; padding:7px 0; border-top:1px solid var(--border); font-size:.65rem; }.chave-serie span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.chave-serie b { grid-row:span 2; color:var(--text-muted); }.chave-serie small { grid-column:1/-1; color:var(--cyan); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.sim-corridas { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }.sim-corridas > h3 { margin:0 0 7px; color:var(--amber); font:700 .65rem var(--font-body); letter-spacing:.1em; text-transform:uppercase; }.sim-corrida { padding:6px 0; border-bottom:1px solid var(--border); }.sim-corrida span,.sim-corrida small { display:block; }.sim-corrida span { color:var(--cyan); font-size:.63rem; font-weight:700; }.sim-corrida small { margin-top:2px; color:var(--text-muted); font-size:.65rem; }
+.sim-corridas { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }.sim-corridas > h3 { margin:0 0 4px; color:var(--amber); font:700 .65rem var(--font-body); letter-spacing:.1em; text-transform:uppercase; }.sim-corridas > p { margin:0 0 7px; color:var(--text-muted); font-size:.6rem; line-height:1.3; }.sim-corrida { padding:6px 0; border-bottom:1px solid var(--border); }.sim-corrida span,.sim-corrida small { display:block; }.sim-corrida span { color:var(--cyan); font-size:.63rem; font-weight:700; }.sim-corrida small { margin-top:2px; color:var(--text-muted); font-size:.65rem; }.sim-corrida small.voce { color:var(--text); font-weight:700; }
 
 /* --- Plano e placar da temporada --- */
 .plano-temporada {
@@ -1008,6 +1044,9 @@ button.acao.secundaria:hover {
 .plano-temporada h2 { margin: 4px 0 6px; font-size: 1.45rem; }
 .plano-temporada > p { color: var(--text-muted); font-size: .86rem; margin: 0 0 16px; }
 .plano-temporada h3 { margin: 16px 0 8px; color: var(--text-muted); font: 700 .65rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
+.ritmo-temporada { width: 100%; margin: 16px 0 4px; padding-top: 16px; border-top: 1px solid var(--border); }.ritmo-temporada h3 { margin: 0 0 8px; color: var(--text-muted); font: 700 .65rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
+.escolha-modo-jogo { max-width: 820px; margin: clamp(34px, 10vh, 110px) auto 0; padding: clamp(30px, 5vw, 56px); text-align: left; }.escolha-modo-jogo .lenda-nome { margin: 6px 0 10px; font-size: clamp(2rem, 5vw, 3rem); }.escolha-modo-jogo .meta-linha { max-width: 600px; text-align: left; line-height: 1.5; }.modo-jogo-opcoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }.modo-jogo-opcao { min-height: 185px; padding: 20px; border: 1px solid var(--border-strong); border-radius: 16px; background: rgba(255,255,255,.025); color: var(--text); cursor: pointer; text-align: left; transition: transform .18s ease, border-color .18s ease, background .18s ease; }.modo-jogo-opcao:hover { transform: translateY(-3px); border-color: var(--cyan); background: rgba(126,182,255,.09); }.modo-jogo-opcao.destaque { border-color: rgba(200,16,46,.55); background: linear-gradient(135deg, rgba(200,16,46,.18), rgba(29,66,138,.18)); }.modo-jogo-opcao span,.modo-jogo-opcao strong,.modo-jogo-opcao small { display: block; }.modo-jogo-opcao span { color: var(--cyan); font: 1rem var(--font-display); }.modo-jogo-opcao strong { margin: 16px 0 8px; font: 1.45rem var(--font-display); line-height: 1; text-transform: uppercase; }.modo-jogo-opcao small { color: var(--text-muted); font-size: .76rem; line-height: 1.45; }.link-acao { border: 0; padding: 0; background: none; color: var(--cyan); font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; }
+.aviso-save { width: 100%; margin: 12px 0; padding: 10px 12px; border: 1px solid rgba(255,107,107,.45); border-radius: 10px; background: rgba(255,107,107,.09); color: #ffb3b3; font-size: .76rem; line-height: 1.4; text-align: left; }
 .plano-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .plano-grid-cinco { grid-template-columns: repeat(5, 1fr); }
 .plano-grid-dois { grid-template-columns: repeat(2, 1fr); }
@@ -1027,6 +1066,7 @@ button.acao.secundaria:hover {
 .sim-campanha span { color: var(--text-muted); font-size: .75rem; text-align: right; }
 .sim-progresso { height: 5px; border-radius: 999px; overflow: hidden; background: var(--surface-3); }
 .sim-progresso span { display: block; height: 100%; background: linear-gradient(90deg, var(--nba-red), var(--cyan)); transition: width .1s linear; }
+.sim-momento { margin: 9px 0 0; color: var(--amber); font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-align: center; text-transform: uppercase; }
 .sim-placar { display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; gap: 8px; margin: 28px 0 12px; }
 .sim-placar > div { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; color: var(--text-muted); font-size: .7rem; text-align: center; }
 .sim-placar > div span { overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }
@@ -1043,6 +1083,31 @@ button.acao.secundaria:hover {
 .sim-resultados h3 { margin: 0 0 8px; color: var(--text-muted); font: 700 .65rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
 .sim-resultado-recente { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: .76rem; }
 .sim-resultado-recente b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; color: #fff; font-size: .62rem; }.sim-resultado-recente.venceu b { background: #187a62; }.sim-resultado-recente.perdeu b { background: #a22b3a; }.sim-resultado-recente strong { color: var(--text); font-size: .78rem; }
+.sim-agenda { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+.sim-agenda h3 { margin: 0 0 8px; color: var(--text-muted); font: 700 .65rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
+.sim-agenda-jogo { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto auto; gap: 7px; align-items: center; min-height: 33px; padding: 6px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: .7rem; }
+.sim-agenda-jogo > b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; background: var(--surface-3); color: var(--cyan); font-size: .61rem; }
+.sim-agenda-jogo > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sim-agenda-jogo em { min-width: 31px; color: var(--amber); font-size: .57rem; font-style: normal; font-weight: 700; text-align: right; }
+.sim-agenda-jogo > strong { min-width: 30px; color: var(--text); font-size: .69rem; text-align: right; }
+.sim-agenda-jogo.concluido em { color: var(--cyan); }.sim-agenda-jogo.atual { margin: 0 -7px; padding: 6px 7px; border-radius: 8px; background: rgba(126, 182, 255, .11); color: var(--text); }
+.pre-jogo { margin: 14px 0 0; padding: 14px; border: 1px solid rgba(126, 182, 255, .28); border-radius: 14px; background: linear-gradient(135deg, rgba(29,66,138,.18), rgba(5,9,16,.18)); text-align: left; }
+.pre-jogo-topo { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; }.pre-jogo-topo span,.missao-jogo span,.desafio-curto span,.preparacao-jogo > span { color: var(--cyan); font-size: .59rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }.pre-jogo-topo strong { color: var(--text-muted); font-size: .68rem; text-align: right; }
+.missao-jogo,.desafio-curto { margin: 8px 0; padding: 10px; border-radius: 10px; background: rgba(255,255,255,.035); }.missao-jogo span,.missao-jogo b,.missao-jogo small,.desafio-curto span,.desafio-curto b,.desafio-curto small { display: block; }.missao-jogo b,.desafio-curto b { margin: 3px 0; color: var(--text); font-size: .8rem; }.missao-jogo small,.desafio-curto small { color: var(--text-muted); font-size: .67rem; line-height: 1.35; }.desafio-curto { border-left: 2px solid var(--amber); }.desafio-curto span { color: var(--amber); }
+.preparacao-jogo { margin-top: 12px; }.preparacao-jogo > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-top: 6px; }.preparacao-jogo .plano-opcao { min-height: 54px; font-size: .66rem; }.preparacao-jogo .plano-opcao b { display: block; }.preparacao-jogo .plano-opcao small { font-size: .56rem; }
+.decisoes-partida { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }.decisoes-partida .preparacao-jogo { margin-top:0; }.decisoes-partida .preparacao-jogo > div { grid-template-columns:1fr; }.decisoes-partida .plano-opcao { min-height:45px; text-align:left; padding:8px; }
+@media (max-width: 760px) { .decisoes-partida { grid-template-columns:1fr; }.decisoes-partida .preparacao-jogo > div { grid-template-columns:repeat(3,minmax(0,1fr)); }.decisoes-partida .plano-opcao { text-align:center; } }
+.ledger-ao-vivo { display:grid; gap:5px; margin:8px 0 10px; padding:8px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,.025); }.ledger-ao-vivo small { color:var(--text-muted); font-size:.61rem; line-height:1.35; }.ledger-ao-vivo b { color:var(--text); }
+.estatisticas-finais,.vitrine-titulos { margin:20px 0; padding:16px; border:1px solid var(--border); border-radius:16px; text-align:left; background:linear-gradient(135deg,rgba(29,66,138,.14),rgba(5,9,16,.12)); }.estatisticas-finais h3,.vitrine-titulos h3 { margin:0 0 12px; color:var(--text-muted); font:700 .68rem var(--font-body); letter-spacing:.13em; text-transform:uppercase; }.estatisticas-finais > div { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }.vitrine-titulos > div { display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:8px; }.estatisticas-finais article { padding:10px 6px; border-radius:10px; background:rgba(255,255,255,.035); text-align:center; }.estatisticas-finais b,.estatisticas-finais span,.estatisticas-finais small { display:block; }.estatisticas-finais b { color:var(--cyan); font:1.45rem var(--font-display); }.estatisticas-finais span { margin-top:3px; font-size:.62rem; font-weight:700; }.estatisticas-finais small { color:var(--text-muted); font-size:.57rem; }.trofeu { min-height:164px; display:flex; flex-direction:column; justify-content:space-between; padding:11px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.02); color:var(--text-muted); }.trofeu b { color:var(--text-muted); font:1.15rem var(--font-display); letter-spacing:.04em; }.trofeu span { font-size:.61rem; line-height:1.2; }.trofeu strong { align-self:flex-end; font:1.5rem var(--font-display); }.trofeu.conquistado { border-color:rgba(255,182,72,.72); background:linear-gradient(145deg,rgba(255,182,72,.2),rgba(200,16,46,.12)); color:var(--text); box-shadow:inset 0 0 22px rgba(255,182,72,.08); }.trofeu.conquistado b,.trofeu.conquistado strong { color:var(--amber); }
+@media (max-width:760px){.estatisticas-finais > div,.vitrine-titulos > div{grid-template-columns:repeat(2,1fr)}.trofeu{min-height:96px}}
+.central-em-andamento { max-width:1120px; }.nav-central { position:sticky; top:0; z-index:4; display:flex; gap:6px; margin:16px 0; padding:7px; overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:rgba(5,9,16,.94); }.nav-central-item { flex:1 0 104px; min-height:38px; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text-muted); font:700 .7rem var(--font-body); cursor:pointer; }.nav-central-item.ativo { color:var(--text); border-color:rgba(126,182,255,.55); background:rgba(29,66,138,.45); }.central-pagina { min-height:300px; text-align:left; }.central-pagina > h2 { margin:0 0 12px; color:var(--text-muted); font:700 .72rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }.central-pagina > p { color:var(--text-muted); font-size:.8rem; }.lista-central { border:1px solid var(--border); border-radius:12px; overflow:hidden; }.linha-central { display:grid; grid-template-columns:42px minmax(0,1fr) minmax(170px,.55fr); gap:10px; align-items:center; padding:12px; border-top:1px solid var(--border); }.linha-central:first-child { border-top:0; }.linha-central b { color:var(--cyan); font-size:.7rem; }.linha-central span { font-size:.82rem; }.linha-central small { color:var(--text-muted); font-size:.68rem; text-align:right; }.linha-central.voce { background:rgba(126,182,255,.09); }.metas-curtas { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }.alertas-central { margin-top:14px; padding:13px; border:1px solid rgba(255,182,72,.35); border-radius:12px; background:rgba(255,182,72,.06); text-align:left; }.alertas-central h3 { margin:0 0 7px; color:var(--amber); font-size:.7rem; text-transform:uppercase; }.alertas-central p { margin:6px 0; color:var(--text-muted); font-size:.75rem; }
+@media (max-width: 760px) { .linha-central { grid-template-columns:30px minmax(0,1fr); }.linha-central small { grid-column:2; text-align:left; }.metas-curtas { grid-template-columns:1fr; }.nav-central { margin-left:-4px; margin-right:-4px; } }
+
+/* Navegação por teclado: nenhum controle depende apenas de hover. */
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, label[for]:focus-visible { box-shadow: 0 0 0 5px rgba(126,182,255,.22); }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; } }
+.pos-jogo { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 10px; align-items: center; margin: 12px 0 0; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.025); text-align: left; }.nota-jogo { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--surface-3); }.nota-jogo b { color: var(--text); font: 1.55rem var(--font-display); line-height: .8; }.nota-jogo span { margin-top: 3px; color: var(--text-muted); font-size: .45rem; font-weight: 700; }.nota-a { box-shadow: inset 0 0 0 1px var(--cyan); }.nota-f,.nota-d { box-shadow: inset 0 0 0 1px rgba(255,107,107,.5); }.pos-jogo > div strong,.pos-jogo > div small { display: block; }.pos-jogo > div strong { color: var(--text); font-size: .78rem; }.pos-jogo > div small { margin-top: 3px; color: var(--text-muted); font-size: .64rem; }.resultado-missao,.resultado-desafio { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--border); font-size: .63rem; font-weight: 700; letter-spacing: .04em; }.cumprida { color: var(--cyan); }.falhou { color: var(--danger); }.resultado-desafio { color: var(--amber); }.resultado-desafio.cumprida { color: var(--cyan); }
 .sim-proximo { margin: 0 0 12px; color: var(--text-muted); font-size: .82rem; text-align: center; }
 .sim-auto-status { margin: 18px 0 0; color: var(--cyan); text-align: center; font-size: .78rem; font-weight: 600; }
 .sim-marco { color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
@@ -1065,12 +1130,143 @@ button.acao.secundaria:hover {
 
   .hero-criacao { padding: 0; text-align: left; }
   .hero-criacao .hero-lead { margin-left: 0; text-align: left; }
+  .hero-cena { width:100%; max-width:480px; height:260px; margin:28px 0 0; }
   .lista-universidades { grid-template-columns: repeat(2, minmax(0, 1fr)); display: grid; }
 }
 
 @media (max-width: 480px) {
+  .hero-cena { height:205px; margin-top:20px; border-radius:18px; }
+  .hero-cena figcaption { left:14px; right:14px; bottom:13px; }
+}
+
+/* Fundo da abertura: a lenda ocupa a tela inteira, como o primeiro quadro
+   de uma transmissão. A camada azul-preta mantém a leitura do jogo intacta. */
+#criacao-personagem { position:relative; isolation:isolate; }
+#criacao-personagem::before { content:""; position:fixed; z-index:-1; inset:0; background:linear-gradient(90deg,rgba(4,8,17,.96) 0%,rgba(4,8,17,.74) 42%,rgba(4,8,17,.18) 100%),linear-gradient(0deg,rgba(4,8,17,.72),transparent 62%),url("img/abertura-lenda.png") center 24% / cover no-repeat; filter:saturate(.9) contrast(1.1) brightness(1.04); pointer-events:none; }
+.hero-cena { border-color:rgba(255,255,255,.2); background:#03060c; }
+.hero-cena::before { z-index:3; background:linear-gradient(90deg,rgba(5,9,20,.06),rgba(5,9,20,.32) 62%,rgba(5,9,20,.78)),linear-gradient(0deg,rgba(5,9,20,.96),transparent 64%); }
+.hero-cena-trilho { display:flex; width:800%; height:100%; animation:galeriaAbertura 42s cubic-bezier(.65,0,.35,1) infinite; }
+.hero-cena-trilho img,.hero-cena img { flex:0 0 12.5%; width:12.5%; height:100%; display:block; object-fit:cover; object-position:center; filter:saturate(.88) contrast(1.1) brightness(.83); transform:none; transition:none; }
+.hero-cena:hover .hero-cena-trilho { animation-play-state:paused; }
+.hero-cena:hover img { transform:none; filter:saturate(1) contrast(1.08) brightness(.92); }
+.hero-cena figcaption { z-index:5; }
+.hero-cena figcaption i { color:rgba(255,255,255,.64); font-size:.58rem; font-style:normal; letter-spacing:.18em; }
+.hero-cena-luz { z-index:4; }
+@keyframes galeriaAbertura {
+  0%,10% { transform:translateX(0); }
+  14.285%,24.285% { transform:translateX(-12.5%); }
+  28.57%,38.57% { transform:translateX(-25%); }
+  42.855%,52.855% { transform:translateX(-37.5%); }
+  57.14%,67.14% { transform:translateX(-50%); }
+  71.425%,81.425% { transform:translateX(-62.5%); }
+  85.71%,95.71% { transform:translateX(-75%); }
+  100% { transform:translateX(-87.5%); }
+}
+@media (prefers-reduced-motion: reduce) { .hero-cena-trilho { animation:none; } }
+
+/* Draft de lendas: a fotografia específica da lenda fica no cartão inteiro,
+   enquanto o contraste e a vinheta preservam as escolhas como foco. */
+.carta-lenda-com-foto { min-height:420px; overflow:hidden; display:grid; place-items:center; }
+.foto-lenda-draft { position:absolute; z-index:0; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 28%; filter:saturate(.82) contrast(1.08) brightness(.64); transform:scale(1.025); }
+.carta-lenda-com-foto::after { content:""; position:absolute; z-index:1; inset:0; background:linear-gradient(90deg,rgba(3,5,9,.92) 0%,rgba(3,5,9,.58) 55%,rgba(3,5,9,.22) 100%),linear-gradient(0deg,rgba(3,5,9,.96),transparent 68%); pointer-events:none; }
+.conteudo-carta-lenda { position:relative; z-index:2; width:min(100%,760px); text-align:center; }
+.carta-lenda-com-foto .lenda-posicao { background:rgba(3,5,9,.56); border-color:rgba(255,204,0,.58); }
+.carta-lenda-com-foto .lenda-nome { color:#fff; text-shadow:0 3px 18px #000; }
+.chamada-lenda { margin:-9px auto 20px; max-width:45ch; color:#dce6f7; font-size:.82rem; text-shadow:0 2px 8px #000; }
+.carta-lenda-com-foto .opcao-atributo { background:linear-gradient(145deg,rgba(8,12,19,.92),rgba(13,21,34,.84)); backdrop-filter:blur(8px); border-color:rgba(255,255,255,.24); }
+.carta-lenda-com-foto .opcao-atributo:hover { border-color:var(--amber); background:linear-gradient(145deg,rgba(35,27,9,.94),rgba(18,32,56,.9)); }
+@media (max-width:760px) { .carta-lenda-com-foto { min-height:390px; }.foto-lenda-draft { object-position:center top; }.carta-lenda-com-foto::after { background:linear-gradient(0deg,rgba(3,5,9,.97) 10%,rgba(3,5,9,.68) 65%,rgba(3,5,9,.17) 100%); }.chamada-lenda { max-width:31ch; margin-bottom:15px; } }
+
+/* Cada lenda passa a dominar o cenário inteiro do draft. O cartão não
+   contém a foto: ele flutua sobre a arena e deixa a lenda reconhecível. */
+body.draft-lenda-ativo::after { content:""; position:fixed; z-index:0; inset:0; pointer-events:none; background-image:linear-gradient(90deg,rgba(3,5,9,.92) 0%,rgba(3,5,9,.58) 48%,rgba(3,5,9,.18) 100%),linear-gradient(0deg,rgba(3,5,9,.9),transparent 65%),var(--foto-lenda-draft),var(--foto-lenda-draft); background-position:center,center,var(--posicao-lenda-draft,center),var(--posicao-lenda-draft,center); background-size:cover,cover,var(--tamanho-lenda-draft,cover),cover; background-repeat:no-repeat; filter:saturate(.88) contrast(1.08) brightness(.88); }
+body.draft-lenda-ativo .app-main { position:relative; z-index:1; }
+body.draft-lenda-ativo .carta-lenda-com-foto { min-height:0; display:block; background:linear-gradient(145deg,rgba(8,11,17,.89),rgba(5,7,11,.76)); border-color:rgba(255,255,255,.23); box-shadow:0 28px 74px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.12); }
+body.draft-lenda-ativo .carta-lenda-com-foto::after { content:none; }
+body.draft-lenda-ativo .conteudo-carta-lenda { width:100%; }
+body.draft-lenda-ativo .chamada-lenda { color:#f0f5ff; }
+@keyframes cenárioLenda { from { opacity:0; transform:scale(1.025); } to { opacity:1; transform:scale(1); } }
+@media (max-width:760px) { body.draft-lenda-ativo::after { background-image:linear-gradient(0deg,rgba(3,5,9,.96) 4%,rgba(3,5,9,.68) 66%,rgba(3,5,9,.2) 100%),var(--foto-lenda-draft),var(--foto-lenda-draft); background-position:center,var(--posicao-lenda-draft,center top),var(--posicao-lenda-draft,center top); background-size:cover,var(--tamanho-lenda-draft,cover),cover; } }
+
+/* Retratos verticais têm outra composição: jogador dentro da carta, escudo
+   gigante do clube ao fundo. Isso evita cortar rosto ou pernas em monitores
+   largos e mantém a identidade do time visível. */
+body.draft-lenda-retrato::after { background-image:radial-gradient(circle at 72% 25%,rgba(255,255,255,.12),transparent 30%),linear-gradient(90deg,rgba(3,5,9,.96),rgba(3,5,9,.67)),var(--logo-lenda-draft); background-position:center,center,78% center; background-size:cover,cover,min(66vw,720px); background-repeat:no-repeat; filter:contrast(1.05) brightness(.92); }
+body.draft-lenda-retrato .carta-lenda-retrato { display:grid; grid-template-columns:minmax(0,1fr) minmax(190px,.45fr); align-items:stretch; gap:18px; min-height:318px; overflow:hidden; }
+body.draft-lenda-retrato .carta-lenda-retrato .conteudo-carta-lenda { grid-column:1; align-self:center; }
+.retrato-lenda { position:relative; grid-column:2; grid-row:1; min-height:274px; margin:0; align-self:end; display:flex; justify-content:center; align-items:end; overflow:hidden; border-left:1px solid rgba(255,255,255,.13); }
+.retrato-lenda::before { content:""; position:absolute; inset:12% 4% 0; background:radial-gradient(ellipse at 50% 80%,rgba(255,204,0,.18),transparent 62%); pointer-events:none; }
+.retrato-lenda img { position:relative; z-index:1; display:block; max-width:100%; width:auto; height:300px; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 14px 11px rgba(0,0,0,.48)); }
+@media (max-width:760px) { body.draft-lenda-retrato::after { background-position:center,center,center 24%; background-size:cover,cover,min(94vw,520px); } body.draft-lenda-retrato .carta-lenda-retrato { display:flex; flex-direction:column; gap:0; min-height:0; } .retrato-lenda { order:-1; width:100%; min-height:168px; height:180px; border:0; border-bottom:1px solid rgba(255,255,255,.13); } .retrato-lenda img { height:202px; } body.draft-lenda-retrato .carta-lenda-retrato .conteudo-carta-lenda { padding-top:16px; } }
+
+/* A foto volta a ser cenário, não um recorte lateral: ela ganha uma área
+   menor, central e atmosférica dentro da carta de decisão. */
+body.draft-lenda-retrato .carta-lenda-retrato { display:block; min-height:372px; }
+body.draft-lenda-retrato .carta-lenda-retrato .conteudo-carta-lenda { width:100%; padding:24px 10px; }
+.fundo-retrato-carta { position:absolute; z-index:1; inset:0; pointer-events:none; background-image:radial-gradient(ellipse at 50% 58%,rgba(255,204,0,.15),transparent 42%),linear-gradient(90deg,rgba(4,7,12,.9),rgba(4,7,12,.2) 50%,rgba(4,7,12,.9)),linear-gradient(0deg,rgba(4,7,12,.92),transparent 66%),var(--foto-retrato-carta); background-position:center,center,center,center 42%; background-size:cover,cover,cover,auto 70%; background-repeat:no-repeat; opacity:.94; filter:saturate(.9) contrast(1.08); }
+@media (max-width:760px) { body.draft-lenda-retrato .carta-lenda-retrato { display:block; min-height:326px; } body.draft-lenda-retrato .carta-lenda-retrato .conteudo-carta-lenda { padding:18px 0 6px; } .fundo-retrato-carta { background-size:cover,cover,cover,auto 63%; background-position:center,center,center,center 25%; } }
+
+@media (max-width: 480px) {
   .plano-grid-cinco { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* -------------------------------------------------------------------------
+   Redesign: "Arena 26" — superfícies editoriais, menos ruído e hierarquia
+   clara para que decisões, números e próximos passos dominem a interface.
+   ------------------------------------------------------------------------- */
+:root { --bg:#060914; --bg-mid:#0b1221; --surface:#101a2d; --surface-2:#15233b; --surface-3:#1b2b47; --border:rgba(174,198,235,.12); --border-strong:rgba(174,198,235,.28); --text:#f6f8ff; --text-muted:#96a4bd; --cyan:#9ac6ff; --radius:16px; --radius-lg:26px; }
+body { background:radial-gradient(900px 500px at 50% -180px,rgba(38,83,163,.55),transparent 70%),radial-gradient(650px 550px at 105% 80%,rgba(200,16,46,.14),transparent 72%),linear-gradient(180deg,#0b1221 0%,#060914 72%); }
+body::before { opacity:.38; background:linear-gradient(90deg,transparent 49.85%,rgba(154,198,255,.06) 50%,transparent 50.15%); }
+.app-header { max-width:1320px; padding:22px 10px 14px; }.brand-mark { width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#f02b4c,#9e1631 45%,#264f9b);box-shadow:0 12px 28px rgba(200,16,46,.28); }.brand-name { font-size:1.5rem; letter-spacing:.04em; }.brand-stripe { width:92px;height:2px;opacity:.8; }.app-main { max-width:1320px; }
+.carta-lenda,.painel-form,.escolha-modo-jogo { border:1px solid var(--border); border-radius:var(--radius-lg); background:linear-gradient(145deg,rgba(21,35,59,.92),rgba(10,17,30,.94)); box-shadow:0 22px 65px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.045); }
+.carta-lenda { padding:clamp(22px,3vw,38px); }.lenda-posicao,.eyebrow { color:var(--cyan); }.lenda-nome { letter-spacing:.025em; }
+button.acao,.acao { min-height:48px; border-radius:13px; background:linear-gradient(135deg,#ee2949,#c8102e); box-shadow:0 10px 24px rgba(200,16,46,.24); transition:transform .18s ease,box-shadow .18s ease,filter .18s ease; } button.acao:hover,.acao:hover { transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 15px 30px rgba(200,16,46,.34); } button.acao.secundaria,.acao.secundaria { background:rgba(255,255,255,.035); border:1px solid var(--border-strong); box-shadow:none; }
+.stats-strip { gap:9px; }.stat-pill { border:1px solid var(--border); border-radius:13px; background:linear-gradient(145deg,rgba(31,53,88,.68),rgba(15,25,43,.75)); }.stat-pill:hover { border-color:rgba(154,198,255,.44); transform:translateY(-2px); }.stat-val { color:#fff; }
+.slot { border-radius:12px; border-color:var(--border); background:rgba(255,255,255,.025); }.slot.preenchido { background:linear-gradient(145deg,rgba(29,66,138,.35),rgba(18,32,54,.48)); border-color:rgba(154,198,255,.25); }
+.nav-carreira,.nav-central { position:sticky; top:10px; z-index:10; padding:6px; border-color:var(--border); background:rgba(8,13,24,.88); backdrop-filter:blur(18px); box-shadow:0 12px 30px rgba(0,0,0,.18); }.nav-carreira-item,.nav-central-item { border-radius:10px; }.nav-carreira-item.ativo,.nav-central-item.ativo { background:linear-gradient(145deg,rgba(47,94,180,.65),rgba(25,57,119,.7)); border-color:rgba(154,198,255,.5); }
+.simulacao-temporada { border-radius:28px; background:linear-gradient(145deg,rgba(20,34,57,.96),rgba(8,14,25,.98)); }.sim-painel-principal,.sim-painel-lateral { border-color:var(--border); background:rgba(255,255,255,.022); border-radius:18px; }.sim-campanha strong { color:#fff; }.sim-progresso { height:8px; background:rgba(255,255,255,.08); }.sim-progresso span { background:linear-gradient(90deg,var(--cyan),#4d83de); box-shadow:0 0 14px rgba(154,198,255,.45); }.sim-placar { border-radius:18px; background:linear-gradient(145deg,rgba(29,66,138,.3),rgba(255,255,255,.02)); }
+.contexto-time > div,.metricas-time div,.comparacao-posicao,.recordes-carreira,.elencos-liga,.historico-liga,.mercado-liga { border-color:var(--border); background:rgba(255,255,255,.025); border-radius:14px; }.linha-central,.sim-agenda-jogo,.historico-item { transition:background .16s ease; }.linha-central:hover,.sim-agenda-jogo:hover,.historico-item:hover { background:rgba(154,198,255,.06); }
+.plano-opcao { border-radius:12px; background:rgba(255,255,255,.025); border-color:var(--border); }.plano-opcao:hover { border-color:rgba(154,198,255,.42); background:rgba(154,198,255,.08); }.plano-opcao.ativo { background:linear-gradient(145deg,rgba(53,104,198,.38),rgba(29,66,138,.32)); }
+.save-item,.uni-opcao { border-radius:15px; border-color:var(--border); background:rgba(255,255,255,.025); }.save-item:hover,.uni-opcao:hover { border-color:rgba(154,198,255,.5); box-shadow:0 12px 24px rgba(0,0,0,.16); }
+@media (max-width:760px){ .app-header{padding:14px 2px 10px}.carta-lenda{padding:20px 14px}.nav-carreira,.nav-central{top:4px;border-radius:13px}.stat-pill{min-height:74px}.simulacao-temporada{border-radius:20px}.brand-stripe{width:42px} }
+
+/* Profundidade 3D: aplicada somente aos elementos que representam objetos
+   físicos da carreira (cartão, placar, estatísticas e troféus). */
+.carta-lenda,.simulacao-temporada,.estatisticas-finais,.vitrine-titulos { position:relative; isolation:isolate; transform-style:preserve-3d; perspective:1200px; }
+.carta-lenda::before,.simulacao-temporada::before { content:""; position:absolute; inset:1px; z-index:-1; border-radius:inherit; background:linear-gradient(125deg,rgba(255,255,255,.09),transparent 30%,transparent 72%,rgba(154,198,255,.08)); pointer-events:none; }
+.carta-lenda { transform:perspective(1400px) rotateX(.35deg); }
+.opcoes,.opcao-atributo { position:relative; z-index:2; pointer-events:auto; }
+.opcao-atributo { transform:translateZ(10px); box-shadow:0 6px 0 rgba(3,7,15,.42),0 16px 26px rgba(0,0,0,.18); }
+.opcao-atributo:hover { transform:translateY(-4px) translateZ(22px); }
+.stat-pill { transform:translateZ(8px); box-shadow:0 9px 0 rgba(3,7,15,.5),0 18px 28px rgba(0,0,0,.18); transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease; }
+.stat-pill:hover { transform:translateY(-5px) translateZ(20px) rotateX(4deg); box-shadow:0 13px 0 rgba(3,7,15,.48),0 25px 32px rgba(0,0,0,.25); }
+.plano-opcao,.uni-opcao,.save-item { transform:translateZ(4px); box-shadow:0 5px 0 rgba(3,7,15,.46); transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+.plano-opcao:hover,.uni-opcao:hover,.save-item:hover { transform:translateY(-4px) translateZ(14px); box-shadow:0 9px 0 rgba(3,7,15,.44),0 18px 26px rgba(0,0,0,.22); }
+button.acao { transform:translateY(-2px) translateZ(14px); box-shadow:0 7px 0 #7d0b20,0 17px 30px rgba(200,16,46,.3); }
+button.acao:hover { transform:translateY(-6px) translateZ(22px) rotateX(2deg); box-shadow:0 11px 0 #7d0b20,0 24px 34px rgba(200,16,46,.38); }
+button.acao:active { transform:translateY(3px) translateZ(2px); box-shadow:0 2px 0 #7d0b20,0 7px 14px rgba(0,0,0,.24); }
+.sim-placar { transform:translateZ(18px); box-shadow:0 11px 0 rgba(3,7,15,.52),0 24px 38px rgba(0,0,0,.28); }
+.sim-logo,.uni-logo-grande,.time-logo-draft { transform:translateZ(28px); filter:drop-shadow(0 12px 12px rgba(0,0,0,.32)); }
+.trofeu { position:relative; transform-style:preserve-3d; transform:perspective(700px) rotateX(2deg) rotateY(-2deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.08),8px 10px 0 rgba(3,7,15,.46),14px 20px 28px rgba(0,0,0,.2); overflow:hidden; transition:transform .25s ease,box-shadow .25s ease; }
+.trofeu::after { content:""; position:absolute; inset:-45% 45% -40% -25%; transform:rotate(22deg) translateZ(8px); background:linear-gradient(90deg,transparent,rgba(255,255,255,.19),transparent); pointer-events:none; }.trofeu:hover { transform:perspective(700px) translateY(-7px) rotateX(7deg) rotateY(-7deg); box-shadow:10px 16px 0 rgba(3,7,15,.42),20px 32px 38px rgba(0,0,0,.3); }
+.trofeu.conquistado { box-shadow:inset 0 1px 0 rgba(255,255,255,.25),8px 10px 0 #60420b,14px 22px 34px rgba(0,0,0,.28),0 0 25px rgba(255,182,72,.2); }
+@media (max-width:760px),(prefers-reduced-motion:reduce){ .carta-lenda{transform:none}.stat-pill,.plano-opcao,.uni-opcao,.save-item,.sim-placar,button.acao,.trofeu{transform:none;box-shadow:0 6px 16px rgba(0,0,0,.18)}.trofeu:hover,.stat-pill:hover,.plano-opcao:hover,.uni-opcao:hover,.save-item:hover,button.acao:hover{transform:none} }
+.trofeu-icone { width:42px; height:42px; display:grid; place-items:center; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.05); font-size:1.45rem !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.1); }.trofeu.conquistado .trofeu-icone { border-color:rgba(255,182,72,.6); background:rgba(255,182,72,.14); }
+.trofeu-imagem { width:100%; height:76px; display:block; object-fit:contain; object-position:center; filter:drop-shadow(0 9px 7px rgba(0,0,0,.32)); transform:translateZ(18px); }.trofeu.conquistado .trofeu-imagem { filter:drop-shadow(0 9px 8px rgba(255,182,72,.22)); }
+.overlay-premio { position:fixed; z-index:100; inset:0; display:grid; place-items:center; padding:20px; background:rgba(2,6,14,.78); backdrop-filter:blur(9px); animation:cerimonia-entrada .38s ease both; }.cerimonia-premio { width:min(420px,100%); padding:28px 26px 24px; overflow:hidden; position:relative; text-align:center; border:1px solid rgba(255,190,82,.72); border-radius:24px; color:var(--text); background:radial-gradient(circle at 50% 24%,rgba(255,188,74,.25),transparent 35%),linear-gradient(145deg,#172d55,#081222 72%); box-shadow:0 28px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.26); animation:trofeu-surge .52s cubic-bezier(.18,.88,.24,1.15) both; }.cerimonia-premio::before { content:""; position:absolute; inset:-60% 34% -60% -36%; transform:rotate(23deg); background:linear-gradient(90deg,transparent,rgba(255,255,255,.19),transparent); pointer-events:none; }.cerimonia-legenda { position:relative; z-index:1; display:block; color:var(--amber); font:700 .68rem var(--font-body); letter-spacing:.18em; }.cerimonia-trofeu { position:relative; z-index:1; width:148px; height:148px; margin:14px auto 10px; object-fit:contain; filter:drop-shadow(0 17px 12px rgba(0,0,0,.35)); animation:trofeu-flutua 2.7s ease-in-out infinite; }.cerimonia-premio h2 { position:relative; z-index:1; margin:0; color:#fff6d9; font:1.8rem var(--font-display); letter-spacing:.035em; }.cerimonia-premio p { position:relative; z-index:1; max-width:300px; margin:10px auto 8px; color:var(--text-muted); line-height:1.45; }.cerimonia-premio small { position:relative; z-index:1; display:block; margin-bottom:17px; color:var(--amber); font-size:.67rem; }.cerimonia-premio .acao { position:relative; z-index:1; width:min(280px,100%); }.cerimonia-premio:focus { outline:none; }@keyframes cerimonia-entrada { from { opacity:0; } to { opacity:1; } }@keyframes trofeu-surge { from { opacity:0; transform:scale(.72) translateY(28px) rotateX(-12deg); } to { opacity:1; transform:none; } }@keyframes trofeu-flutua { 50% { transform:translateY(-7px) rotateY(5deg); } }@media (prefers-reduced-motion:reduce){.overlay-premio,.cerimonia-premio,.cerimonia-trofeu{animation:none}}
+.convocacao-selecao { margin:18px 0; padding:20px; text-align:center; border:1px solid rgba(126,182,255,.55); border-radius:18px; background:radial-gradient(circle at 50% 0,rgba(126,182,255,.2),transparent 62%),rgba(15,33,61,.65); }.convocacao-selecao span { display:block; color:var(--cyan); font:700 .67rem var(--font-body); letter-spacing:.15em; }.convocacao-selecao h2 { margin:8px 0 4px; color:var(--text); font:1.65rem var(--font-display); }.convocacao-selecao p { margin:0; color:var(--text-muted); }.convocacao-selecao small { display:block; margin-top:10px; color:var(--amber); font-size:.68rem; }
+.campanha-selecao { margin:18px 0; padding:20px; border:1px solid rgba(126,182,255,.55); border-radius:18px; background:linear-gradient(145deg,rgba(15,41,78,.86),rgba(6,15,30,.8)); text-align:center; }.campanha-selecao > span { color:var(--cyan); font:700 .67rem var(--font-body); letter-spacing:.13em; }.campanha-selecao h2 { margin:8px 0; color:var(--text); font:1.7rem var(--font-display); }.campanha-selecao > p { margin:0 0 14px; color:var(--text-muted); }.jogos-selecao { display:grid; gap:7px; text-align:left; }.jogo-selecao { display:grid; grid-template-columns:100px minmax(0,1fr) 68px; gap:9px; align-items:center; padding:10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.035); }.jogo-selecao small,.jogo-selecao em { color:var(--text-muted); font-size:.65rem; font-style:normal; }.jogo-selecao b { color:var(--text); font-size:.75rem; }.jogo-selecao b i { color:var(--text-muted); font-style:normal; }.jogo-selecao strong { text-align:right; color:var(--cyan); font:.95rem var(--font-display); }.jogo-selecao em { grid-column:2 / -1; }.jogo-selecao.venceu { border-color:rgba(75,202,133,.46); }.jogo-selecao.venceu strong { color:#75e6a6; }.jogo-selecao.perdeu { border-color:rgba(200,16,46,.48); }.jogo-selecao.perdeu strong { color:#ff738a; }.jogo-selecao.pendente { border-color:rgba(126,182,255,.42); }@media(max-width:560px){.jogo-selecao{grid-template-columns:1fr}.jogo-selecao strong{text-align:left}.jogo-selecao em{grid-column:auto}}
+.elenco-selecao { display:flex; flex-wrap:wrap; gap:5px; margin:12px 0; padding:10px; border:1px solid var(--border); border-radius:10px; text-align:left; }.elenco-selecao small { flex-basis:100%; color:var(--text-muted); font-size:.61rem; }.elenco-selecao span { padding:4px 6px; border-radius:6px; background:rgba(255,255,255,.05); color:var(--text-muted); font-size:.61rem; }.elenco-selecao span.usuario { color:var(--amber); border:1px solid rgba(255,182,72,.45); }
+.clutch-camisa{background:linear-gradient(90deg,var(--cor-a,#1d428a) 0 46%,#f4f6fa 47% 53%,var(--cor-b,#c8102e) 54%)}
+.narrativa-clutch{margin:10px 0;padding:12px;border-left:3px solid var(--amber);background:rgba(255,204,0,.08);color:var(--text);line-height:1.45}.narrativa-clutch.erro{border-color:var(--nba-red);background:rgba(200,16,46,.1)}
+.galeria-recordes{margin:18px 0;border:1px solid var(--border);border-radius:14px;background:#090c12}.galeria-recordes summary{padding:14px;cursor:pointer;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.galeria-recordes>div{display:grid;gap:14px;padding:0 12px 12px}.galeria-recordes section{display:grid;gap:7px}.galeria-recordes h3{margin:4px 2px;color:var(--text-muted);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase}.nota-recordes{margin:0 12px 12px;color:var(--text-muted);font-size:.75rem;line-height:1.45}.galeria-recordes article{display:grid;grid-template-columns:1fr auto;gap:4px;padding:10px;border:1px solid var(--border);border-radius:9px}.galeria-recordes b{color:var(--text);font-size:.75rem}.galeria-recordes span{color:var(--text-muted);font-size:.66rem}.galeria-recordes strong{grid-column:1/-1;color:var(--cyan);font-size:.68rem}.galeria-recordes article.quebrado{border-color:var(--amber);background:rgba(255,204,0,.1)}.galeria-recordes article.quebrado strong{color:var(--amber)}.galeria-recordes article.indisponivel{opacity:.62;border-style:dashed}.galeria-recordes article.indisponivel strong{color:var(--text-muted)}
+.central-recordes{margin:0 0 20px;border:1px solid var(--border-strong);border-radius:16px;overflow:hidden;background:radial-gradient(circle at 100% 0,rgba(255,204,0,.12),transparent 33%),linear-gradient(145deg,#0d1422,#070a10)}.central-recordes>header{display:flex;justify-content:space-between;gap:18px;align-items:start;padding:20px;border-bottom:1px solid var(--border)}.central-recordes header span{color:var(--amber);font:800 .61rem var(--font-body);letter-spacing:.16em}.central-recordes h2{margin:5px 0 7px;color:var(--text);font:clamp(1.4rem,3vw,2rem)/1 var(--font-display);letter-spacing:.03em;text-transform:uppercase}.central-recordes header p{max-width:560px;margin:0;color:var(--text-muted);font-size:.76rem;line-height:1.45}.central-recordes>header>strong{flex:0 0 auto;color:var(--amber);font:2.2rem/1 var(--font-display);text-align:right}.central-recordes>header>strong small{display:block;margin-top:3px;color:var(--text-muted);font:700 .58rem var(--font-body);letter-spacing:.08em}.central-recordes-grupos{display:grid;gap:18px;padding:16px}.central-recordes-grupos>section>h3{margin:0 0 8px;color:var(--text-muted);font:800 .65rem var(--font-body);letter-spacing:.13em;text-transform:uppercase}.central-recordes-grupos>section>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px}.central-recorde{position:relative;display:grid;gap:5px;min-height:133px;padding:12px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.025)}.central-recorde-status{color:var(--cyan);font:800 .56rem var(--font-body);letter-spacing:.1em}.central-recorde b{color:var(--text);font-size:.78rem;line-height:1.15}.central-recorde small{color:var(--text-muted);font-size:.63rem}.central-recorde-barra{height:5px;margin-top:4px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1)}.central-recorde-barra i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--cyan),#fff)}.central-recorde strong{color:var(--cyan);font-size:.77rem}.central-recorde strong em{color:var(--text-muted);font-size:.61rem;font-style:normal}.central-recorde.quebrado{border-color:rgba(255,204,0,.75);background:rgba(255,204,0,.08)}.central-recorde.quebrado .central-recorde-status,.central-recorde.quebrado strong{color:var(--amber)}.central-recorde.quebrado .central-recorde-barra i{background:var(--amber)}.central-recorde.indisponivel{opacity:.62;border-style:dashed}.central-recorde.indisponivel p{margin:5px 0 0;color:var(--text-muted);font-size:.64rem;line-height:1.35}@media(max-width:560px){.central-recordes>header{padding:16px}.central-recordes>header>strong{font-size:1.8rem}.central-recordes-grupos{padding:12px}.central-recordes-grupos>section>div{grid-template-columns:1fr}}
+.central-recorde .central-recorde-melhor{margin-top:auto;color:rgba(220,232,255,.58);font-size:.57rem;letter-spacing:.03em}
+.sim-box-playoff{display:grid;gap:4px;margin:12px 0;padding:11px;border:1px solid rgba(126,182,255,.32);border-radius:10px;background:rgba(126,182,255,.07);text-align:center}.sim-box-playoff span{color:var(--cyan);font:800 .58rem var(--font-body);letter-spacing:.12em}.sim-box-playoff strong{color:var(--text);font-size:.8rem}.sim-box-playoff small{color:var(--text-muted);font-size:.64rem}.sim-box-playoff.historico{border-color:rgba(255,204,0,.65);background:rgba(255,204,0,.09)}.sim-box-playoff.historico span{color:var(--amber)}
+.overlay-clutch{position:fixed;inset:0;z-index:95;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.9);backdrop-filter:blur(12px)}.momento-clutch{width:min(700px,100%);padding:24px;border:1px solid rgba(255,204,0,.65);border-radius:20px;text-align:center;background:radial-gradient(circle at 50% 0,rgba(255,204,0,.15),transparent 42%),linear-gradient(145deg,#102347,#05070c);box-shadow:0 28px 90px #000}.clutch-kicker{color:var(--amber);font:700 .68rem var(--font-body);letter-spacing:.18em}.clutch-placar{display:grid;grid-template-columns:1fr 30px 1fr;gap:8px;align-items:center;margin:17px 0 8px}.clutch-placar div{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,.3)}.clutch-placar img{width:34px;height:34px;object-fit:contain}.clutch-placar b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;font-size:.68rem}.clutch-placar strong{color:#fff;font:2rem var(--font-display)}.clutch-placar>em{color:var(--amber);font:1.2rem var(--font-display);font-style:normal}.clutch-relogio{display:flex;justify-content:center;gap:16px;align-items:center;color:var(--text-muted);font-size:.62rem;letter-spacing:.1em}.clutch-relogio b{color:var(--amber);font:1.6rem var(--font-display)}.clutch-quadra{position:relative;height:145px;margin:16px 0 10px;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:linear-gradient(90deg,rgba(29,66,138,.5),rgba(29,66,138,.14)),repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.05) 23px)}.clutch-quadra::after{content:"";position:absolute;right:-38px;top:26px;width:110px;height:88px;border:3px solid rgba(255,255,255,.6);border-left:0;border-radius:0 90px 90px 0}.clutch-jogador{position:absolute;z-index:2;left:42%;bottom:5px;display:grid;justify-items:center;filter:drop-shadow(0 8px 4px rgba(0,0,0,.4))}.clutch-jogador i{width:28px;height:28px;border-radius:50%;background:#9b623f}.clutch-camisa{width:64px;height:73px;display:grid;place-items:center;clip-path:polygon(18% 0,34% 13%,66% 13%,82% 0,100% 25%,78% 36%,83% 100%,17% 100%,22% 36%,0 25%);background:linear-gradient(90deg,var(--nba-red) 0 45%,#f4f6fa 46% 54%,var(--nba-blue) 55%);color:#fff;font:1.65rem var(--font-display);text-shadow:0 2px 2px #000}.clutch-jogador small{margin-top:3px;color:#fff;font-size:.6rem}.clutch-aro{position:absolute;right:44px;top:57px;color:var(--amber);font:4.4rem Arial}.momento-clutch>p{margin:8px 0;color:var(--text-muted)}.clutch-opcoes{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.clutch-opcoes button{min-height:58px;border:1px solid var(--border);border-radius:9px;background:#080b11;color:var(--text);cursor:pointer}.clutch-opcoes button:hover{border-color:var(--amber);background:rgba(255,204,0,.12)}.clutch-opcoes b,.clutch-opcoes small{display:block}.clutch-opcoes b{font:.9rem var(--font-display)}.clutch-opcoes small{color:var(--text-muted);font-size:.57rem}@media(max-width:600px){.momento-clutch{padding:18px 12px}.clutch-placar div{grid-template-columns:28px minmax(0,1fr);padding:6px}.clutch-placar strong{grid-column:2;font-size:1.5rem;text-align:left}.clutch-opcoes{grid-template-columns:repeat(2,1fr)}.clutch-quadra{height:125px}}
+
+/* Direção 2026: um dashboard de carreira mais denso, escuro e tátil. */
+:root{--bg:#030405;--bg-mid:#080a0e;--surface:#0b0e14;--surface-2:#10151d;--surface-3:#151c27;--border:rgba(255,255,255,.11);--border-strong:rgba(126,182,255,.42);--amber:#ffcc00;--amber-dim:#805f00;--cyan:#8bbcff}.app-header{position:sticky;top:0;z-index:40;max-width:none;margin:0 calc(clamp(16px,3vw,42px) * -1);padding:13px clamp(16px,3vw,42px);background:rgba(3,4,5,.9);border-bottom:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px)}.brand-mark{border-radius:7px;background:linear-gradient(135deg,var(--nba-blue) 0 49%,var(--nba-red) 50%);box-shadow:none}.brand-stripe{width:64px;background:linear-gradient(90deg,var(--nba-blue),#fff 49%,var(--nba-red) 50%)}body{padding-bottom:56px;background:radial-gradient(ellipse 80% 40% at 50% -5%,rgba(29,66,138,.21),transparent 64%),radial-gradient(ellipse 40% 35% at 100% 55%,rgba(200,16,46,.12),transparent 70%),#030405}body::before{opacity:.32;background:linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.06) 50%,transparent 50.2%),repeating-linear-gradient(0deg,transparent 0 44px,rgba(255,255,255,.018) 45px)}.app-main{max-width:1220px}.carta-lenda,.painel-form,.escolha-modo-jogo{border-radius:18px;background:linear-gradient(145deg,rgba(16,20,27,.96),rgba(5,7,10,.98));box-shadow:0 18px 48px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.055)}.carta-lenda::before{background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 17%,transparent 70%,rgba(29,66,138,.12))}.lenda-posicao,.eyebrow{color:var(--amber);letter-spacing:.16em}.lenda-nome{font-size:clamp(2rem,5vw,4.4rem);line-height:.9}.stats-strip{padding:7px;border:1px solid var(--border);border-radius:15px;background:#06080c}.stat-pill{border-radius:9px;background:#101724}.stat-pill:first-child{border-color:rgba(255,204,0,.52);background:linear-gradient(135deg,rgba(255,204,0,.14),rgba(29,66,138,.15))}.stat-val{font-size:clamp(1.4rem,2vw,2rem)}.nav-carreira,.nav-central{top:69px;border-radius:10px;background:rgba(5,7,10,.94);border-color:rgba(255,255,255,.13)}.nav-carreira-item,.nav-central-item{position:relative;border-radius:7px;text-transform:uppercase;letter-spacing:.06em}.nav-carreira-item.ativo,.nav-central-item.ativo{background:linear-gradient(135deg,rgba(29,66,138,.82),rgba(18,45,102,.82));border-color:rgba(139,188,255,.6)}.nav-carreira-simular{background:linear-gradient(135deg,rgba(200,16,46,.85),rgba(133,8,29,.85))}button.acao,.acao{border-radius:8px;background:linear-gradient(135deg,var(--nba-red),#931126);box-shadow:0 6px 0 #590916,0 15px 26px rgba(0,0,0,.34);text-transform:uppercase;letter-spacing:.05em}button.acao:hover,.acao:hover{box-shadow:0 9px 0 #590916,0 22px 34px rgba(0,0,0,.4)}button.acao.secundaria,.acao.secundaria{background:#0e131b;color:#dce8ff}.modo-jogo-opcao,.plano-opcao,.uni-opcao,.save-item{border-radius:11px;background:#090c11}.modo-jogo-opcao:hover,.plano-opcao:hover,.uni-opcao:hover{border-color:var(--amber);box-shadow:0 0 0 1px rgba(255,204,0,.13),0 14px 24px rgba(0,0,0,.3)}.modo-jogo-opcao.destaque{border-color:rgba(255,204,0,.6);background:linear-gradient(135deg,rgba(255,204,0,.12),rgba(29,66,138,.2))}.simulacao-temporada{border:1px solid rgba(255,255,255,.13);background:linear-gradient(135deg,#0d1118,#040507 75%)}.sim-painel-principal,.sim-painel-lateral,.contexto-time>div,.metricas-time div,.corrida-premio,.chave-playoffs{background:#090c12;border-radius:11px}.sim-placar{border:1px solid rgba(255,204,0,.34);background:radial-gradient(circle at 50% 0,rgba(255,204,0,.12),transparent 60%),#0b0f17}.premio-card,.trofeu{background:#0a0d13;border-radius:10px}.overlay-premio{background:rgba(0,0,0,.88)}@media(max-width:760px){.app-header{top:0}.nav-carreira,.nav-central{top:59px}.lenda-nome{font-size:2.25rem}.stats-strip{gap:5px}.stat-pill{border-radius:7px}.carta-lenda,.painel-form{background:#080b10}}
 
 @media (max-width: 480px) {
   .painel-form { padding: 22px 16px 26px; }
@@ -1141,6 +1337,9 @@ button.acao.secundaria:hover {
   .calendario-mensal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metricas-time, .comparacao-posicao, .corrida-premios { grid-template-columns: 1fr; }
   .chave-wrapper { margin-inline: -14px; padding-inline: 14px; }
+  .escolha-modo-jogo { margin-top: 24px; padding: 28px 18px; }
+  .modo-jogo-opcoes { grid-template-columns: 1fr; margin-top: 20px; }
+  .modo-jogo-opcao { min-height: 142px; }
 }
 
 @media (max-width: 480px) {
@@ -1151,3 +1350,399 @@ button.acao.secundaria:hover {
   .sim-x { font-size: 1rem; }
   .sim-painel-lateral { max-height: 250px; }
 }
+
+/* Acabamento cinematográfico do draft: leitura estável sobre qualquer foto,
+   cor do time como detalhe e resposta clara em cada decisão. */
+body.draft-lenda-ativo .app-main {
+  max-width: min(1180px, calc(100% - 32px));
+}
+
+body.draft-lenda-ativo .trilha {
+  margin: 18px auto 24px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 18px;
+  background: rgba(3,6,12,.54);
+  backdrop-filter: blur(14px);
+}
+
+body.draft-lenda-ativo .slot {
+  border-color: color-mix(in srgb, var(--cor-lenda) 32%, rgba(255,255,255,.16));
+  background: rgba(4,8,15,.68);
+}
+
+body.draft-lenda-ativo .slot.preenchido {
+  border-color: var(--cor-lenda);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--cor-lenda) 36%, rgba(7,12,22,.9)), rgba(7,12,22,.9));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--cor-lenda) 24%, transparent);
+}
+
+body.draft-lenda-ativo .carta-lenda-com-foto {
+  border-color: color-mix(in srgb, var(--cor-lenda) 48%, rgba(255,255,255,.3));
+  background: linear-gradient(135deg, rgba(4,8,14,.94), rgba(6,11,20,.78));
+  box-shadow: 0 30px 80px rgba(0,0,0,.56), 0 0 0 1px color-mix(in srgb, var(--cor-lenda) 16%, transparent), inset 0 1px 0 rgba(255,255,255,.16);
+}
+
+body.draft-lenda-ativo .carta-lenda-com-foto::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  border-radius:inherit;
+  opacity:.14;
+  pointer-events:none;
+  background-image: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--cor-lenda) 45%, transparent), transparent 52%), var(--logo-lenda-draft, none);
+  background-repeat:no-repeat;
+  background-position:center, 84% 50%;
+  background-size:cover, min(44vw, 390px);
+  filter: grayscale(1) contrast(1.25);
+}
+
+body.draft-lenda-ativo .conteudo-carta-lenda {
+  position:relative;
+  z-index:1;
+  animation: entradaConteudoLenda .42s cubic-bezier(.2,.75,.25,1) both;
+}
+
+body.draft-lenda-ativo .lenda-posicao {
+  border-color: var(--cor-lenda);
+  color: #fff;
+  background: color-mix(in srgb, var(--cor-lenda) 26%, rgba(3,7,14,.82));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--cor-lenda) 22%, transparent);
+}
+
+body.draft-lenda-ativo .lenda-nome {
+  max-width: 14ch;
+  margin-inline: auto;
+  text-wrap: balance;
+  text-shadow: 0 3px 22px #000, 0 0 28px color-mix(in srgb, var(--cor-lenda) 25%, transparent);
+}
+
+body.draft-lenda-ativo .chamada-lenda {
+  max-width: 52ch;
+  padding: 0 12px;
+  color: #edf3ff;
+}
+
+body.draft-lenda-ativo .opcoes {
+  gap: 14px;
+}
+
+body.draft-lenda-ativo .opcao-atributo {
+  min-height: 128px;
+  border-color: rgba(255,255,255,.24);
+  background: linear-gradient(145deg, rgba(7,12,21,.94), rgba(12,20,34,.82));
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease, opacity .22s ease, filter .22s ease;
+}
+
+body.draft-lenda-ativo .opcao-atributo:hover,
+body.draft-lenda-ativo .opcao-atributo:focus-visible {
+  z-index:3;
+  border-color: var(--cor-lenda);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--cor-lenda) 30%, rgba(8,13,23,.96)), rgba(11,20,35,.94));
+  box-shadow: 0 8px 0 rgba(3,7,15,.52), 0 22px 36px rgba(0,0,0,.38), 0 0 26px color-mix(in srgb, var(--cor-lenda) 28%, transparent);
+  outline: none;
+}
+
+body.draft-lenda-ativo .opcao-atributo:hover .valor,
+body.draft-lenda-ativo .opcao-atributo:focus-visible .valor {
+  color: #fff;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--cor-lenda) 70%, transparent);
+}
+
+body.draft-lenda-ativo .opcoes:has(.opcao-atributo:hover) .opcao-atributo:not(:hover),
+body.draft-lenda-ativo .opcoes:has(.opcao-atributo:focus-visible) .opcao-atributo:not(:focus-visible) {
+  opacity: .54;
+  filter: saturate(.5);
+  transform: translateZ(4px) scale(.97);
+}
+
+body.draft-lenda-ativo .opcao-atributo:active {
+  transform: translateY(0) translateZ(12px) scale(.985);
+}
+
+body.draft-lenda-ativo .opcao-atributo .valor {
+  color: var(--cor-lenda);
+  transition: color .2s ease, text-shadow .2s ease;
+}
+
+body.draft-lenda-trocando::after { animation: cenárioLenda .48s ease both; }
+
+@keyframes entradaConteudoLenda {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width:760px) {
+  body.draft-lenda-ativo .app-main { max-width: min(100% - 20px, 1180px); }
+  body.draft-lenda-ativo .trilha { padding:6px; border-radius:14px; }
+  body.draft-lenda-ativo .carta-lenda-com-foto { padding:24px 14px; }
+  body.draft-lenda-ativo .carta-lenda-com-foto::before { background-size:cover, 270px; background-position:center, 90% 84%; }
+  body.draft-lenda-ativo .opcao-atributo { min-height:106px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body.draft-lenda-trocando::after,
+  body.draft-lenda-ativo .conteudo-carta-lenda { animation:none; }
+  body.draft-lenda-ativo .opcao-atributo { transition:none; }
+}
+
+/* DNA do prospecto: cada segmento conserva a cor da lenda de origem. */
+#trilha {
+  display:block;
+}
+
+.dna-cabecalho {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  padding:2px 5px 10px;
+  color:#dce8ff;
+  font-size:.64rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.dna-cabecalho strong {
+  color:var(--text-muted);
+  font-size:.6rem;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+
+.dna-cabecalho b {
+  color:var(--cor-lenda, var(--cyan));
+  font-size:.82rem;
+}
+
+.dna-segmentos {
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+  gap:8px;
+}
+
+.dna-segmentos .slot {
+  --cor-dna: var(--text-muted);
+  position:relative;
+  min-width:0;
+  min-height:82px;
+  padding:10px 8px 8px;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+.dna-segmentos .slot::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0;
+  opacity:0;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--cor-dna) 45%, transparent), transparent 68%);
+  transition:opacity .25s ease;
+}
+
+.dna-segmentos .slot.preenchido {
+  border-color:var(--cor-dna);
+  background:rgba(5,10,18,.78);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--cor-dna) 24%, transparent), 0 0 20px color-mix(in srgb, var(--cor-dna) 18%, transparent);
+}
+
+.dna-segmentos .slot.preenchido::before { opacity:1; }
+.dna-segmentos .slot.preenchido .slot-valor { color:#fff; text-shadow:0 0 14px color-mix(in srgb, var(--cor-dna) 60%, transparent); }
+.dna-segmentos .slot-label { position:relative; z-index:1; font-size:.57rem; line-height:1.1; }
+.dna-segmentos .slot-valor { position:relative; z-index:1; margin-top:3px; font-size:1.5rem; }
+
+.dna-origem {
+  position:relative;
+  z-index:1;
+  min-height:1.15em;
+  margin-top:4px;
+  overflow:hidden;
+  color:color-mix(in srgb, var(--cor-dna) 72%, #dce8ff);
+  font-size:.53rem;
+  font-weight:700;
+  line-height:1.1;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.dna-segmentos .slot:not(.preenchido) .dna-origem { color:rgba(220,232,255,.42); font-weight:500; }
+
+@media (max-width:760px) {
+  .dna-cabecalho { padding-inline:2px; font-size:.58rem; }
+  .dna-cabecalho strong { font-size:.55rem; }
+  .dna-segmentos { gap:5px; }
+  .dna-segmentos .slot { min-height:72px; padding:8px 4px 6px; border-radius:9px; }
+  .dna-segmentos .slot-label { font-size:.49rem; letter-spacing:.035em; }
+  .dna-segmentos .slot-valor { font-size:1.25rem; }
+  .dna-origem { margin-top:3px; font-size:.47rem; }
+}
+
+@media (max-width:480px) {
+  .dna-segmentos { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+  .dna-cabecalho { align-items:flex-start; flex-direction:column; gap:2px; }
+}
+
+/* Passagem do draft para a universidade: uma abertura de cinema de 4 s. */
+.intro-universidade {
+  position:fixed;
+  z-index:120;
+  inset:0;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  pointer-events:auto;
+  background:#000;
+  transition:opacity .34s ease;
+}
+
+.intro-cortina {
+  position:absolute;
+  z-index:1;
+  left:0;
+  right:0;
+  height:50.5%;
+  background:linear-gradient(180deg, #020306, #080b12 72%, #12182a);
+  box-shadow:0 0 28px rgba(0,0,0,.82), inset 0 0 80px rgba(0,0,0,.65);
+  transition:transform 1.12s cubic-bezier(.72,0,.18,1);
+}
+
+.intro-cortina::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--amber), transparent);
+  opacity:.78;
+}
+
+.intro-cortina-superior { top:0; transform:translateY(0); }
+.intro-cortina-superior::after { bottom:0; }
+.intro-cortina-inferior { bottom:0; transform:translateY(0) scaleY(-1); }
+.intro-cortina-inferior::after { bottom:0; }
+.intro-universidade.ativa .intro-cortina-superior { transform:translateY(-101%); }
+.intro-universidade.ativa .intro-cortina-inferior { transform:translateY(101%) scaleY(-1); }
+
+.intro-conteudo {
+  position:relative;
+  z-index:2;
+  display:grid;
+  justify-items:center;
+  min-width:min(460px, 92vw);
+  padding:32px 28px;
+  text-align:center;
+  color:#fff;
+  opacity:0;
+  transform:translateY(18px) scale(.96);
+  transition:opacity .48s ease .48s, transform .48s cubic-bezier(.2,.85,.25,1) .48s;
+  text-shadow:0 3px 18px #000;
+}
+
+.intro-universidade.ativa .intro-conteudo { opacity:1; transform:translateY(0) scale(1); }
+.intro-conteudo { min-height:270px; }
+.intro-cena { position:absolute; z-index:1; inset:0; display:grid; align-content:center; justify-items:center; opacity:0; pointer-events:none; }
+.intro-universidade.ativa .intro-cena-um { animation:cenaIntroUm 30s ease both; }
+.intro-universidade.ativa .intro-cena-dois { animation:cenaIntroDois 30s ease both; }
+.intro-universidade.ativa .intro-cena-tres { animation:cenaIntroTres 30s ease both; }
+.intro-universidade.ativa .intro-cena-quatro { animation:cenaIntroQuatro 30s ease both; }
+.intro-universidade.ativa .intro-cena-cinco { animation:cenaIntroCinco 30s ease both; }
+.intro-universidade.ativa .intro-cena-seis { animation:cenaIntroSeis 30s ease both; }
+.intro-universidade.ativa .intro-cena-sete { animation:cenaIntroSete 30s ease both; }
+.intro-kicker { color:var(--amber); font-size:.68rem; font-weight:800; letter-spacing:.2em; text-transform:uppercase; }
+.intro-conteudo h2 { max-width:12ch; margin:10px 0 8px; font:clamp(2.4rem, 8vw, 5.4rem)/.86 var(--font-display); letter-spacing:.03em; text-transform:uppercase; text-wrap:balance; }
+.intro-overall { display:flex; align-items:baseline; gap:7px; color:var(--amber); }
+.intro-overall strong { font:clamp(3.5rem, 10vw, 6rem)/.85 var(--font-display); }
+.intro-overall span { font-size:.66rem; font-weight:800; letter-spacing:.17em; }
+.intro-conteudo p { margin:12px 0 0; color:#edf3ff; font-size:.78rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+.intro-cena-dois p,.intro-cena-tres p,.intro-cena-quatro p,.intro-cena-cinco p,.intro-cena-seis p,.intro-cena-sete p { max-width:min(620px,88vw); font-size:clamp(.75rem,1.7vw,1rem); line-height:1.55; }
+.intro-cena-tres p { color:#c9dbff; letter-spacing:.09em; }
+@keyframes cenaIntroUm { 0%,2% { opacity:0; transform:translateY(16px); } 5%,12% { opacity:1; transform:translateY(0); } 15%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroDois { 0%,14% { opacity:0; transform:translateY(14px); } 17%,23% { opacity:1; transform:translateY(0); } 26%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroTres { 0%,25% { opacity:0; transform:translateY(14px); } 28%,35% { opacity:1; transform:translateY(0); } 38%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroQuatro { 0%,37% { opacity:0; transform:translateY(14px); } 40%,45% { opacity:1; transform:translateY(0); } 48%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroCinco { 0%,47% { opacity:0; transform:translateY(14px); } 50%,70% { opacity:1; transform:translateY(0); } 73%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroSeis { 0%,71% { opacity:0; transform:translateY(14px); } 74%,84% { opacity:1; transform:translateY(0); } 87%,100% { opacity:0; transform:translateY(-12px); } }
+@keyframes cenaIntroSete { 0%,85% { opacity:0; transform:translateY(14px); } 89%,98% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-12px); } }
+.intro-placar { display:grid; grid-template-columns:1fr minmax(130px,1.15fr) 1fr; align-items:center; width:min(480px,86vw); margin:18px 0 10px; padding:12px; border:1px solid rgba(255,255,255,.22); border-radius:14px; background:rgba(255,255,255,.055); box-shadow:0 14px 36px rgba(0,0,0,.36); }
+.intro-placar b { color:#fff; font:clamp(2.4rem,7vw,4rem)/.85 var(--font-display); }.intro-placar span { color:#dce8ff; font-size:.63rem; font-weight:800; letter-spacing:.1em; line-height:1.5; text-align:center; }.intro-placar i { color:var(--amber); font-style:normal; }.intro-manchete,.intro-rumo { display:block; margin-top:13px; color:var(--amber); font:clamp(1.7rem,5vw,3.2rem)/.9 var(--font-display); letter-spacing:.04em; }.intro-rumo { color:#fff; text-shadow:0 0 25px rgba(255,204,0,.42); }
+
+/* As cenas passam a ser comandadas pelo roteiro; o nome do rival pausa a
+   narrativa até o jogador confirmar. */
+.intro-universidade.ativa .intro-cena { animation:none; }
+.intro-universidade.ativa .intro-cena.visivel { opacity:1; transform:translateY(0); pointer-events:auto; transition:opacity .42s ease, transform .42s ease; }
+.intro-capitulo { position:absolute; z-index:4; top:clamp(18px,4vh,40px); left:50%; transform:translateX(-50%); min-width:max-content; color:rgba(220,232,255,.68); font:800 .57rem var(--font-body); letter-spacing:.17em; text-align:center; text-transform:uppercase; }
+.intro-capitulo::after { content:""; display:block; width:42px; height:1px; margin:8px auto 0; background:var(--amber); }
+.intro-rival-campo { display:grid; gap:7px; width:min(340px,82vw); margin:17px auto 10px; color:#c9dbff; font-size:.6rem; font-weight:800; letter-spacing:.12em; text-align:left; text-transform:uppercase; }
+.intro-rival-campo input { width:100%; min-height:46px; border:1px solid rgba(255,255,255,.3); border-radius:10px; padding:10px 12px; background:rgba(255,255,255,.06); color:#fff; font:700 .9rem var(--font-body); outline:none; }.intro-rival-campo input:focus { border-color:var(--amber); box-shadow:0 0 0 3px rgba(255,204,0,.12); }
+.intro-confirmar-rival { border:1px solid var(--amber); border-radius:9px; padding:11px 16px; background:rgba(255,204,0,.13); color:#fff7d7; font:800 .68rem var(--font-body); letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }.intro-confirmar-rival:hover,.intro-confirmar-rival:focus-visible { background:rgba(255,204,0,.25); outline:none; }
+.intro-cena-quatro small { display:block; margin-top:11px; color:rgba(220,232,255,.62); font-size:.58rem; }
+.intro-farpa { max-width:min(600px,86vw); margin:15px auto 0; color:#f1f6ff; font-size:clamp(.85rem,2vw,1.15rem) !important; font-weight:500 !important; letter-spacing:.04em !important; line-height:1.55 !important; text-transform:none !important; }.intro-farpa b { color:var(--amber); }.intro-farpa-resposta { color:#aebed9; font-size:.78rem !important; font-style:italic; }
+.intro-cena-origem p,.intro-cena-oito p,.intro-cena-dez p { max-width:min(650px,88vw); font-size:clamp(.85rem,2vw,1.12rem) !important; font-weight:500 !important; letter-spacing:.03em !important; line-height:1.6 !important; text-transform:none !important; }.intro-cena-origem b,.intro-cena-oito b { color:var(--amber); }
+
+.intro-luz {
+  position:absolute;
+  z-index:-1;
+  top:-42%;
+  width:22vw;
+  height:180%;
+  opacity:.45;
+  background:linear-gradient(180deg, rgba(255,245,205,.7), rgba(255,204,0,.08) 28%, transparent 70%);
+  filter:blur(10px);
+  transform-origin:top center;
+  animation:varrerLuz 2.1s ease-in-out infinite alternate;
+}
+
+.intro-luz-um { left:-24vw; transform:rotate(23deg); }
+.intro-luz-dois { right:-24vw; transform:rotate(-23deg); animation-delay:-1.1s; }
+.intro-pular,.intro-som,.intro-proximo { position:absolute; z-index:3; bottom:clamp(16px,3vw,32px); border:1px solid rgba(255,255,255,.32); border-radius:999px; padding:9px 13px; background:rgba(3,6,12,.52); color:#dce8ff; font:700 .62rem var(--font-body); letter-spacing:.08em; text-transform:uppercase; cursor:pointer; opacity:0; transition:opacity .3s ease .85s, border-color .18s ease, background .18s ease; }
+.intro-pular { right:clamp(16px,3vw,38px); }.intro-som { left:clamp(16px,3vw,38px); }
+.intro-proximo { left:50%; transform:translateX(-50%); border-color:rgba(255,204,0,.72); color:var(--amber); }
+.intro-proximo[hidden] { display:none; }
+.intro-universidade.ativa .intro-pular,.intro-universidade.ativa .intro-som,.intro-universidade.ativa .intro-proximo { opacity:1; }.intro-pular:hover,.intro-pular:focus-visible,.intro-som:hover,.intro-som:focus-visible,.intro-proximo:hover,.intro-proximo:focus-visible { border-color:var(--amber); background:rgba(255,204,0,.12); outline:none; }
+.intro-universidade.encerrando { opacity:0; }.intro-universidade.encerrando .intro-conteudo { transition-delay:0s; transform:translateY(-10px) scale(.98); opacity:0; }
+@keyframes varrerLuz { to { opacity:.72; transform:rotate(7deg) translateX(8vw); } }
+
+@media (max-width:640px) {
+  .intro-conteudo { min-width:0; width:100%; padding:22px 16px; }
+  .intro-conteudo h2 { font-size:clamp(2.2rem, 14vw, 3.8rem); }
+  .intro-luz { width:44vw; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .intro-cortina,.intro-conteudo,.intro-pular,.intro-som,.intro-proximo { transition-duration:.01ms; }
+  .intro-luz,.intro-cena { animation:none !important; }
+  .intro-universidade.ativa .intro-cena-um { opacity:1; transform:none; }
+}
+
+/* Resumo compacto do encerramento da carreira. */
+.carta-lenda.tela-final { box-sizing:border-box; width:min(680px,100%); margin:24px auto; padding:24px; border:1px solid var(--border); border-radius:14px; background:#090c11; box-shadow:none; transform:none; }
+.carta-lenda.tela-final::before { content:none; }
+.tela-final .time-logo-draft { width:48px; height:48px; object-fit:contain; }
+.tela-final .lenda-posicao { font-size:.6rem; padding:0; border:0; background:none; color:var(--text-muted); }
+.tela-final .lenda-nome { font-size:clamp(1.8rem,4vw,2.5rem); line-height:1.1; margin:10px 0; }
+.tela-final .meta-linha { font-size:.75rem; margin:6px 0; }
+.tela-final .overall { font-size:2.5rem; line-height:1; margin:12px 0 4px; text-shadow:none; }
+.tela-final .stats-strip { padding:0; gap:8px; border:0; background:none; }
+.tela-final .stat-pill { min-height:0; padding:10px; background:none; border:0; box-shadow:none; transform:none; }
+.tela-final .stat-val { font-size:1.2rem; }
+.tela-final .stat-lab { font-size:.6rem; }
+.tela-final .estatisticas-finais,.tela-final .vitrine-titulos { margin:14px 0; padding:12px 0; border:0; border-top:1px solid var(--border); border-radius:0; background:none; box-shadow:none; }
+.tela-final .estatisticas-finais h3,.tela-final .vitrine-titulos h3 { font-size:.6rem; margin-bottom:10px; }
+.tela-final .estatisticas-finais article { padding:6px 3px; background:none; }
+.tela-final .estatisticas-finais b { font-size:1.2rem; }
+.tela-final .vitrine-titulos>div { grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.tela-final .trofeu { min-height:0; padding:8px; flex-direction:row; align-items:center; gap:6px; border:0; border-radius:6px; background:#ffffff04; box-shadow:none; transform:none; }
+.tela-final .trofeu-imagem,.tela-final .trofeu-icone { width:30px; height:36px; min-height:0; object-fit:contain; margin:0; font-size:1.3rem; }
+.tela-final .trofeu>div { flex:1; min-width:0; }
+.tela-final .trofeu b { font-size:.8rem; }
+.tela-final .trofeu span { display:block; font-size:.52rem; }
+.tela-final .trofeu strong { align-self:center; font-size:1rem; }
+.carreira-detalhes { border-top:1px solid var(--border); padding-top:12px; text-align:left; }
+.carreira-detalhes summary { cursor:pointer; font-size:.75rem; color:var(--text-muted); padding:6px 0; }
+.carreira-detalhes summary:focus-visible { outline:2px solid var(--cyan); outline-offset:4px; }
+.tela-final .acoes-stack { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+.tela-final .acoes-stack button.acao { width:auto; min-height:44px; margin:0; padding:10px 14px; font-size:.65rem; box-shadow:none; }
+@media(max-width:560px) { .carta-lenda.tela-final { padding:18px 14px; margin:12px auto; }.tela-final .estatisticas-finais>div { grid-template-columns:repeat(2,minmax(0,1fr)); }.tela-final .vitrine-titulos>div { grid-template-columns:repeat(2,minmax(0,1fr)); } }

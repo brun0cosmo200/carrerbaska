@@ -1,0 +1,8 @@
+{
+  "name": "baska-carreira-nba",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs",
+    "test": "node tests/core.test.js && node tests/balance.test.js"
+  }
+}

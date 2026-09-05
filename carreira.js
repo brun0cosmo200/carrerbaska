@@ -55,6 +55,7 @@ function initCarreiraPro(jogador) {
       allNba: 0,
       allNba1: 0,
       sixthMan: 0,
+      finaisMvp: 0,
     };
   }
   if (!jogador.historicoPremios) jogador.historicoPremios = [];
@@ -67,10 +68,23 @@ function initCarreiraPro(jogador) {
   if (jogador.pressao === undefined) jogador.pressao = 0;
   if (jogador.energia === undefined) jogador.energia = 75;
   if (jogador.interesseMercado === undefined) jogador.interesseMercado = 0;
+  if (jogador.relacaoImprensa === undefined) jogador.relacaoImprensa = 50;
+  if (jogador.lesaoAtiva === undefined) jogador.lesaoAtiva = null;
+  if (!jogador.historicoForma) jogador.historicoForma = [];
   if (!jogador.historicoDecisoes) jogador.historicoDecisoes = [];
-  if (!jogador.estatisticasCarreira) {
-    jogador.estatisticasCarreira = { jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 };
-  }
+  const estatisticasPadrao = {
+    jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0,
+    arremessosConvertidos: 0, arremessosTentados: 0, tresConvertidas: 0, tresTentadas: 0,
+    lancesLivresConvertidos: 0, lancesLivresTentados: 0, turnovers: 0, minutos: 0,
+    doubleDoubles: 0, tripleDoubles: 0,
+  };
+  jogador.estatisticasCarreira = { ...estatisticasPadrao, ...(jogador.estatisticasCarreira || {}) };
+  // Saves anteriores não tinham um recorte por liga; partimos do total já
+  // salvo uma única vez e, daqui em diante, a contagem NBA é independente.
+  jogador.estatisticasNba = { ...estatisticasPadrao, ...(jogador.estatisticasNba || jogador.estatisticasCarreira) };
+  // Progresso de recordes de temporada nunca é acumulado entre anos. A melhor
+  // marca histórica vive em outro mapa, mantido pelo módulo profissional.
+  if (!jogador.recordesTemporadaAtualNBA) jogador.recordesTemporadaAtualNBA = {};
   if (!jogador.papel) jogador.papel = sugerirPapel(jogador);
   if (!jogador.contrato) {
     jogador.contrato = {
@@ -90,11 +104,19 @@ function sugerirPapel(jogador) {
     : 0;
   // A confiança do técnico desloca a disputa por minutos: boa leitura
   // coletiva abre espaço mesmo para quem ainda está abaixo do overall do time.
-  const gap = overallNorm - jogador.time.forca + encaixe +
+  const compatível = (atleta) => atleta.posicao === jogador.posicao ||
+    (atleta.posicao === "G" && ["PG", "SG"].includes(jogador.posicao)) ||
+    (atleta.posicao === "F" && ["SF", "PF"].includes(jogador.posicao));
+  const concorrentes = (jogador.time.jogadores || [])
+    .filter((atleta) => !atleta.usuario && compatível(atleta))
+    .sort((a, b) => b.overall - a.overall);
+  const melhorDaPosicao = concorrentes[0] ? concorrentes[0].overall : jogador.time.forca;
+  const segundoDaPosicao = concorrentes[1] ? concorrentes[1].overall : melhorDaPosicao - 5;
+  const gap = overallNorm - melhorDaPosicao + encaixe +
     (jogador.confiancaTecnico - 50) * 0.15 +
     (jogador.impulsoTitular || 0) * 0.8 - (jogador.penalidadeMinutos || 0) * 4;
-  if (gap >= -4) return "titular";
-  if (gap >= -11) return "sexto";
+  if (gap >= -3) return "titular";
+  if (overallNorm - segundoDaPosicao + encaixe >= -7) return "sexto";
   return "banco";
 }
 
@@ -236,6 +258,9 @@ function acumularPremios(jogador, individuais, temporadaLabel) {
   if (individuais.anel) {
     p.aneis++;
     ganhos.push("Anel de campeão");
+    // MVP das Finais é elegível apenas para o campeão; impacto alto torna a
+    // conquista provável, mas não automática.
+    if (Math.random() < 0.42) { p.finaisMvp = (p.finaisMvp || 0) + 1; ganhos.push("MVP das Finais"); }
   }
   if (individuais.mvp) {
     p.mvp++;

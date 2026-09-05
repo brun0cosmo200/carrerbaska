@@ -61,6 +61,7 @@ function roubarAtributo(estado, lendaId, atributoEscolhido) {
   estado.atributos[atributoEscolhido] = lenda.valores[atributoEscolhido];
   estado.lendasRestantes = estado.lendasRestantes.filter((l) => l.id !== lendaId);
   estado.historico.push({
+    lendaId: lenda.id,
     lenda: lenda.nome,
     roubado: atributoEscolhido,
     valor: lenda.valores[atributoEscolhido],

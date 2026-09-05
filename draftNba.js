@@ -100,7 +100,7 @@ if (typeof window !== "undefined") {
             <p class="meta-linha compacta">força ${time.forca} · ${time.conferencia} · ${jogador.nome}</p>
           </div>
         </div>
-        <p class="meta-linha">${jogador.posicao} · ${jogador.altura}cm · ${jogador.peso}kg</p>
+        <p class="meta-linha">${jogador.bandeira || "🌍"} ${jogador.nacionalidade || "Internacional"} · #${jogador.numeroCamisa ?? 0} · ${jogador.posicao} · ${jogador.altura}cm · ${jogador.peso}kg</p>
         <div class="overall" style="margin:12px 0;">${posicao}ª</div>
         <p class="meta-linha compacta">${round}ª rodada · escolha ${posicao} de ${TOTAL_POSICOES}</p>
         <p class="meta-linha">Começa em: <b style="color:var(--text);">${rotuloContexto}</b></p>

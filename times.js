@@ -108,6 +108,7 @@ const AGENTES_LIVRES = [];
 const NECESSIDADES_ROTATIVAS = [["PG", "C"], ["SG", "SF"], ["PF", "C"], ["PG", "SF"], ["SG", "PF"]];
 const POSICOES_RODIZIO = ["PG", "SG", "SF", "PF", "C", "G", "F", "C", "G", "F", "C", "PG", "SF", "PF", "SG"];
 const POSICOES_BASE = ["PG", "SG", "SF", "PF", "C"];
+const SALARY_CAP = 150; // milhões, simplificado para manter decisões legíveis
 
 TIMES.forEach((t, i) => {
   t.estrelas = t.elenco.slice(0, 3);
@@ -124,7 +125,12 @@ TIMES.forEach((t, i) => {
     overall: Math.max(65, Math.min(94, t.forca + 5 - slot * 1.4)),
     potencial: Math.max(68, Math.min(96, t.forca + 8 - slot * 0.7)),
     posicao: POSICOES_RODIZIO[slot],
+    // Minutos pertencem ao atleta — e não apenas ao papel narrativo. Isso
+    // permite comparar o usuário com a rotação que ele precisa superar.
+    minutos: slot < 5 ? 34 - slot : slot < 9 ? 25 - (slot - 5) * 2 : Math.max(4, 14 - (slot - 9)),
     contrato: { anosRestantes: 1 + ((i + slot) % 4), salario: Math.round(Math.max(1.2, (t.forca + 5 - slot * 1.4) * 0.42) * 10) / 10 },
+    historico: [],
+    temporadasLiga: 0,
   }));
 });
 
@@ -154,6 +160,47 @@ function atualizarIdentidadeDoElenco(time) {
   const mediaTop8 = time.jogadores.slice(0, 8).reduce((s, j) => s + j.overall, 0) / Math.max(1, Math.min(8, time.jogadores.length));
   time.forca = Math.round(Math.max(70, Math.min(92, mediaTop8)));
   atualizarNecessidadesDoElenco(time);
+  time.folhaSalarial = +(time.jogadores.reduce((total, atleta) => total + ((atleta.contrato && atleta.contrato.salario) || 0), 0)).toFixed(1);
+  time.espacoCap = +(SALARY_CAP - time.folhaSalarial).toFixed(1);
+}
+
+TIMES.forEach(atualizarIdentidadeDoElenco);
+
+function sincronizarJogadorDaCarreira(jogador) {
+  if (!jogador || !jogador.idCarreira) return null;
+  // O atleta controlado nunca pode existir em dois elencos, nem entrar no
+  // mercado/aposentadoria administrado pela IA.
+  TIMES.forEach((time) => {
+    time.jogadores = time.jogadores.filter((atleta) => !(atleta.usuario && atleta.id === jogador.idCarreira));
+  });
+  if (jogador.contexto !== "nba" || !jogador.time) return null;
+  const time = TIMES.find((candidato) => candidato.nome === jogador.time.nome);
+  if (!time) return null;
+  const overall = Math.round(Object.values(jogador.atual || {}).reduce((soma, valor) => soma + valor, 0) / Math.max(1, Object.keys(jogador.atual || {}).length));
+  const potencial = Math.round(Object.values(jogador.potencial || jogador.atual || {}).reduce((soma, valor) => soma + valor, 0) / Math.max(1, Object.keys(jogador.potencial || jogador.atual || {}).length));
+  time.jogadores.push({
+    id: jogador.idCarreira,
+    usuario: true,
+    nome: jogador.nome,
+    idade: jogador.idade,
+    overall,
+    potencial,
+    posicao: jogador.posicao,
+    minutos: jogador.papel === "titular" ? 32 : jogador.papel === "sexto" ? 24 : 13,
+    contrato: { salario: Math.round(Math.max(1.2, overall * .38) * 10) / 10, ...(jogador.contrato || { anosRestantes: 1, papelGarantido: "banco" }) },
+  });
+  time.jogadores.sort((a, b) => b.overall - a.overall);
+  while (time.jogadores.length > 15) {
+    const indiceCorte = time.jogadores.map((atleta, indice) => ({ atleta, indice })).filter(({ atleta }) => !atleta.usuario).pop();
+    if (!indiceCorte) break;
+    const dispensado = time.jogadores.splice(indiceCorte.indice, 1)[0];
+    // A chegada do usuário não apaga um atleta do mundo: ele passa a estar
+    // disponível no mercado para a próxima movimentação da liga.
+    if (dispensado && !AGENTES_LIVRES.some((livre) => livre.id === dispensado.id)) AGENTES_LIVRES.push(dispensado);
+  }
+  atualizarIdentidadeDoElenco(time);
+  jogador.time = time;
+  return time.jogadores.find((atleta) => atleta.usuario && atleta.id === jogador.idCarreira) || null;
 }
 
 function renovarContrato(jogador) {
@@ -198,10 +245,10 @@ function executarTrocasDaLiga(movimentacoes) {
     if (!vendedor) continue;
     atualizarNecessidadesDoElenco(comprador);
     const alvo = vendedor.jogadores
-      .filter((j) => comprador.necessidades.includes(j.posicao) && !j.calouro)
+      .filter((j) => comprador.necessidades.includes(j.posicao) && !j.calouro && !j.usuario)
       .sort((a, b) => b.overall - a.overall)[0];
     const retorno = comprador.jogadores
-      .filter((j) => vendedor.necessidades.includes(j.posicao) && !j.calouro)
+      .filter((j) => vendedor.necessidades.includes(j.posicao) && !j.calouro && !j.usuario)
       .sort((a, b) => Math.abs(a.overall - (alvo ? alvo.overall : 0)) - Math.abs(b.overall - (alvo ? alvo.overall : 0)))[0];
     if (!alvo || !retorno || Math.abs(alvo.overall - retorno.overall) > 9) continue;
     vendedor.jogadores = vendedor.jogadores.filter((j) => j.id !== alvo.id);
@@ -223,13 +270,18 @@ function avancarMundoLiga(draft) {
   TIMES.forEach((time) => {
     const ativos = [];
     time.jogadores.forEach((j) => {
+      if (j.usuario) { ativos.push(j); return; }
       j.calouro = false;
+      j.historico = j.historico || [];
+      j.temporadasLiga = (j.temporadasLiga || 0) + 1;
       j.idade += 1;
       const delta = j.idade <= 24 ? 1 + (Math.random() < 0.24 ? 1 : 0) : j.idade <= 29 ? (Math.random() < 0.3 ? 1 : 0) : j.idade <= 33 ? (Math.random() < 0.5 ? -1 : 0) : -1 - (Math.random() < 0.35 ? 1 : 0);
       j.overall = Math.max(55, Math.min(j.potencial, j.overall + delta));
+      j.historico.push({ temporada: HISTORICO_LIGA.length + 1, time: time.nome, idade: j.idade, overall: Math.round(j.overall), evento: delta > 0 ? "evolução" : delta < 0 ? "declínio" : "estável" });
+      if (j.historico.length > 20) j.historico.splice(0, j.historico.length - 20);
       const aposenta = j.idade >= 39 || (j.idade >= 35 && Math.random() < (j.idade - 34) * 0.16);
       if (aposenta) {
-        aposentados.push({ nome: j.nome, time: time.nome, idade: j.idade });
+        aposentados.push({ nome: j.nome, time: time.nome, idade: j.idade, temporadas: j.temporadasLiga, overallFinal: Math.round(j.overall) });
         return;
       }
       j.contrato = j.contrato || { anosRestantes: 1, salario: Math.round(j.overall * 0.4) };
@@ -263,8 +315,12 @@ function avancarMundoLiga(draft) {
   executarTrocasDaLiga(movimentacoes);
   TIMES.forEach((time) => {
     const calouros = time.jogadores.filter((j) => j.calouro).sort((a, b) => b.potencial - a.potencial).slice(0, 2);
-    const outros = time.jogadores.filter((j) => !j.calouro).sort((a, b) => b.overall - a.overall);
-    time.jogadores = [...calouros, ...outros].slice(0, 15);
+    const usuario = time.jogadores.filter((j) => j.usuario);
+    const outros = time.jogadores.filter((j) => !j.calouro && !j.usuario).sort((a, b) => b.overall - a.overall);
+    // O jogador controlado só muda de franquia por uma decisão do usuário.
+    // Mesmo que a rotação fique cheia após draft e mercado, ele preserva a
+    // vaga e o corte atinge a borda do elenco, nunca a carreira ativa.
+    time.jogadores = [...usuario, ...calouros, ...outros].slice(0, 15);
     atualizarIdentidadeDoElenco(time);
   });
   return { aposentados, agentesLivres: AGENTES_LIVRES.slice(0, 12).map((j) => ({ nome: j.nome, posicao: j.posicao, overall: Math.round(j.overall) })), movimentacoes };
@@ -300,7 +356,7 @@ function encontrarTimePorNome(nome) {
   return TIMES.find((t) => t.nome === nome) || null;
 }
 
-const api = { TIMES, HISTORICO_LIGA, AGENTES_LIVRES, encontrarTimePorNome, encaixeJogadorNoTime, avancarMundoLiga, registrarHistoricoLiga };
+const api = { TIMES, HISTORICO_LIGA, AGENTES_LIVRES, SALARY_CAP, encontrarTimePorNome, encaixeJogadorNoTime, avancarMundoLiga, registrarHistoricoLiga, sincronizarJogadorDaCarreira };
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = api;

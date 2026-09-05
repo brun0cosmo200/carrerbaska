@@ -46,13 +46,101 @@ function estatisticasDoJogo(jogador, desempenhoJogo) {
   const estilo = jogador.planoTemporada && jogador.planoTemporada.estilo;
   const uso = estilo === "agressivo" ? 1.13 : estilo === "coletivo" ? 0.86 : 1;
   const criacao = estilo === "coletivo" ? 1.20 : estilo === "agressivo" ? 0.9 : 1;
+  // Todas as linhas do box score nascem juntas. Assim, pontos, bolas de
+  // três e aproveitamento não são contadores decorativos desconectados.
+  const pontos = ((a.arremesso * 0.5 + a.criacao * 0.3 + a.atletismo * 0.2) / 100) * 35 * f * minutos * uso;
+  const tresConvertidas = Math.max(0, Math.min(14, Math.round((a.arremesso / 100) * 4.4 * f * minutos * (estilo === "agressivo" ? 1.18 : 1))));
+  const lancesLivresConvertidos = Math.max(0, Math.round((a.atletismo * .42 + a.arremesso * .38) / 100 * 5.4 * f * minutos));
+  // Deduzimos as cestas de dois da pontuação para manter o box score
+  // matematicamente coerente. A pequena correção evita totais negativos.
+  const cestasDeDois = Math.max(0, Math.round((pontos - tresConvertidas * 3 - lancesLivresConvertidos) / 2));
+  const arremessosConvertidos = cestasDeDois + tresConvertidas;
+  const aproveitamento = Math.max(.38, Math.min(.66, .43 + (a.arremesso - 55) / 220 + (f - .7) / 7));
+  const arremessosTentados = Math.max(arremessosConvertidos, Math.round(arremessosConvertidos / aproveitamento));
+  const tresTentadas = Math.max(tresConvertidas, Math.round(tresConvertidas / Math.max(.27, Math.min(.52, .31 + (a.arremesso - 55) / 210))));
+  const lancesLivresTentados = Math.max(lancesLivresConvertidos, Math.round(lancesLivresConvertidos / Math.max(.62, Math.min(.93, .7 + a.arremesso / 400))));
+  const rebotes = ((a.defesa * 0.5 + a.atletismo * 0.5) / 100) * 14 * f * minutos;
+  const assistencias = ((a.qiBasquete * 0.6 + a.criacao * 0.4) / 100) * 12 * f * minutos * criacao;
   return {
-    pontos: ((a.arremesso * 0.5 + a.criacao * 0.3 + a.atletismo * 0.2) / 100) * 35 * f * minutos * uso,
-    rebotes: ((a.defesa * 0.5 + a.atletismo * 0.5) / 100) * 14 * f * minutos,
-    assistencias: ((a.qiBasquete * 0.6 + a.criacao * 0.4) / 100) * 12 * f * minutos * criacao,
+    pontos: cestasDeDois * 2 + tresConvertidas * 3 + lancesLivresConvertidos,
+    rebotes,
+    assistencias,
     roubos: ((a.defesa * 0.7 + a.qiBasquete * 0.3) / 100) * 2.5 * f * minutos,
     tocos: ((a.defesa * 0.6 + a.atletismo * 0.4) / 100) * 2.5 * f * minutos,
+    arremessosConvertidos,
+    arremessosTentados,
+    tresConvertidas,
+    tresTentadas,
+    lancesLivresConvertidos,
+    lancesLivresTentados,
+    turnovers: Math.max(0, Math.round((2.8 + (70 - a.qiBasquete) / 18 + (uso - 1) * 5) * f * minutos)),
+    minutos: Math.max(8, Math.round(30 * minutos)),
   };
+}
+
+// Uma atuação histórica não é um bônus recorrente: ela só pode acontecer em
+// uma noite excepcional de um jogador de elite e no máximo uma vez por
+// temporada. Isso abre uma rota rara aos livros de recordes sem inflar as
+// médias normais do simulador.
+function sortearNoiteHistorica(jogador, desempenhoJogo, jaAconteceu) {
+  if (jaAconteceu || desempenhoJogo < 90) return null;
+  const overall = overallDe(jogador.atual);
+  if (overall < 88) return null;
+  const chance = 0.012 + Math.max(0, overall - 92) * 0.003;
+  if (Math.random() >= chance) return null;
+  const talentos = [
+    ["pontos", jogador.atual.arremesso + jogador.atual.criacao],
+    ["rebotes", jogador.atual.defesa + jogador.atual.atletismo],
+    ["assistencias", jogador.atual.qiBasquete + jogador.atual.criacao],
+    ["defesa", jogador.atual.defesa * 2 + jogador.atual.atletismo],
+    ["tres", jogador.atual.arremesso * 2 + jogador.atual.qiBasquete],
+  ].sort((a, b) => b[1] - a[1]);
+  const foco = talentos[Math.floor(Math.random() * Math.min(3, talentos.length))][0];
+  const titulos = {
+    pontos: "A ARENA TESTEMUNHA UMA CHUVA DE PONTOS",
+    rebotes: "DOMÍNIO ABSOLUTO NO GARRAFÃO",
+    assistencias: "UMA AULA DE CRIAÇÃO",
+    defesa: "A NOITE EM QUE O ARO DESAPARECEU",
+    tres: "A LINHA DE TRÊS VIROU TERRITÓRIO DELE",
+  };
+  return { foco, titulo: titulos[foco] };
+}
+
+function aplicarNoiteHistorica(stats, noite) {
+  const inteiro = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+  if (noite.foco === "pontos") {
+    const pontos = inteiro(62, 100);
+    const tres = inteiro(5, 13);
+    const livres = inteiro(12, 28);
+    const dois = Math.max(0, Math.round((pontos - tres * 3 - livres) / 2));
+    stats.tresConvertidas = tres;
+    stats.lancesLivresConvertidos = livres;
+    stats.arremessosConvertidos = dois + tres;
+    stats.arremessosTentados = Math.max(stats.arremessosConvertidos, stats.arremessosConvertidos + inteiro(8, 22));
+    stats.tresTentadas = Math.max(tres, tres + inteiro(3, 10));
+    stats.lancesLivresTentados = Math.max(livres, livres + inteiro(0, 5));
+    stats.pontos = dois * 2 + tres * 3 + livres;
+  } else if (noite.foco === "rebotes") {
+    stats.rebotes = inteiro(30, 55);
+  } else if (noite.foco === "assistencias") {
+    stats.assistencias = inteiro(18, 30);
+  } else if (noite.foco === "defesa") {
+    if (Math.random() < 0.54) stats.tocos = inteiro(9, 17);
+    else stats.roubos = inteiro(7, 11);
+  } else if (noite.foco === "tres") {
+    const tres = inteiro(10, 14);
+    const livres = inteiro(6, 16);
+    const dois = inteiro(7, 15);
+    stats.tresConvertidas = tres;
+    stats.tresTentadas = tres + inteiro(4, 11);
+    stats.lancesLivresConvertidos = livres;
+    stats.lancesLivresTentados = livres + inteiro(0, 4);
+    stats.arremessosConvertidos = dois + tres;
+    stats.arremessosTentados = stats.arremessosConvertidos + inteiro(7, 17);
+    stats.pontos = dois * 2 + tres * 3 + livres;
+  }
+  stats.minutos = Math.max(stats.minutos || 0, 43);
+  return stats;
 }
 
 function winPctEsperado(forca) {
@@ -121,6 +209,7 @@ function simularCalendarioETabela(jogador) {
   const somaEstatisticas = { pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 };
   let pontosTimeTemporada = 0;
   let pontosContraTemporada = 0;
+  let noiteHistoricaRealizada = false;
   const forcaJog = forcaEfetivaJogador(jogador);
 
   for (let i = 0; i < jogosJogados; i++) {
@@ -134,7 +223,10 @@ function simularCalendarioETabela(jogador) {
     somaDesempenho += desempenhoJogo;
     if (desempenhoJogo >= LIMIAR_MVP_PARTIDA) mvpsDePartida++;
 
+    const noiteHistorica = sortearNoiteHistorica(jogador, desempenhoJogo, noiteHistoricaRealizada);
+    if (noiteHistorica) noiteHistoricaRealizada = true;
     const stats = estatisticasDoJogo(jogador, desempenhoJogo);
+    if (noiteHistorica) aplicarNoiteHistorica(stats, noiteHistorica);
     somaEstatisticas.pontos += stats.pontos;
     somaEstatisticas.rebotes += stats.rebotes;
     somaEstatisticas.assistencias += stats.assistencias;
@@ -143,14 +235,16 @@ function simularCalendarioETabela(jogador) {
 
     // Lesão grave reduz um pouco a chance de vitória do time
     const penLesao = lesao && lesao.tipo === "grave" ? 0.04 : lesao ? 0.02 : 0;
-    const venceu = Math.random() < Math.max(0.18, chanceVitoria(forcaJog, adversario.forca) - penLesao);
+    const venceu = noiteHistorica
+      ? Math.random() < 0.93
+      : Math.random() < Math.max(0.18, chanceVitoria(forcaJog, adversario.forca) - penLesao);
     if (venceu) registrarResultado(regs, jogador.time.nome, adversario.nome);
     else registrarResultado(regs, adversario.nome, jogador.time.nome);
     const pontosTime = Math.round(96 + forcaJog * 0.32 + Math.random() * 18);
     const pontosAdversario = Math.max(78, pontosTime + (venceu ? -(3 + Math.floor(Math.random() * 13)) : 3 + Math.floor(Math.random() * 13)));
     pontosTimeTemporada += pontosTime;
     pontosContraTemporada += pontosAdversario;
-    jogos.push({ adversario, venceu, pontosTime, pontosAdversario, stats, rivalidade, pressao: pressaoJogo, mes: MESES_TEMPORADA[Math.min(MESES_TEMPORADA.length - 1, Math.floor(i / 12))] });
+    jogos.push({ adversario, venceu, pontosTime, pontosAdversario, stats, noiteHistorica, rivalidade, pressao: pressaoJogo, mes: MESES_TEMPORADA[Math.min(MESES_TEMPORADA.length - 1, Math.floor(i / 12))] });
   }
 
   // Jogos sem o jogador: time joga mais fraco
@@ -257,8 +351,17 @@ function paresPrimeiraRodada(seeds) {
   ];
 }
 
-function jogarSerie(a, b) {
-  const venceuA = Math.random() < chanceVitoria(a.time.forca, b.time.forca);
+function jogarSerie(a, b, jogador) {
+  let chanceA = chanceVitoria(a.time.forca, b.time.forca);
+  // Em playoffs o protagonista de elite precisa mudar a equação. O bônus é
+  // deliberadamente limitado: um elenco fraco ainda pode cair, mas uma grande
+  // carreira não fica refém de quatro sorteios secos.
+  if (jogador && jogador.time && (a.time.nome === jogador.time.nome || b.time.nome === jogador.time.nome)) {
+    const overall = overallDe(jogador.atual);
+    const bonus = Math.min(.14, .05 + Math.max(0, overall - 78) * .006);
+    chanceA += a.time.nome === jogador.time.nome ? bonus : -bonus;
+  }
+  const venceuA = Math.random() < Math.max(.18, Math.min(.85, chanceA));
   return venceuA ? a : b;
 }
 
@@ -273,6 +376,381 @@ function rastrearEliminacao(jogador, a, b, vencedor, rodada, caminho) {
     eliminadoNa: rodada,
     eliminadoPor: vencedor.time,
     conferencia: jogador.time.conferencia,
+  };
+}
+
+// --- Temporada progressiva -------------------------------------------------
+// O calendário interativo não pode nascer com 82 resultados escondidos. Estas
+// funções mantêm somente a agenda e resolvem uma rodada quando ela acontece.
+function criarRegistrosDaLiga() {
+  return Object.fromEntries(TIMES.map((time) => [time.nome, novoRegistro(time)]));
+}
+
+// Ledger da temporada: cada rodada escreve aqui antes de atualizar a UI.
+// Não há projeção baseada no vencedor final; classificação, forma e prêmios
+// sempre são derivados somente dos jogos já resolvidos.
+function criarLedgerDaLiga(jogador) {
+  const equipes = Object.fromEntries(TIMES.map((time) => [time.nome, {
+    jogos: 0, vitorias: 0, derrotas: 0, pontosPro: 0, pontosContra: 0,
+    forma: [], meses: Object.fromEntries(MESES_TEMPORADA.map((mes) => [mes, { jogos: 0, vitorias: 0, derrotas: 0, pontosPro: 0, pontosContra: 0 }])),
+  }]));
+  const estrelas = TIMES.map((time, indice) => {
+    const nome = (time.estrelas || time.elenco || ["Estrela"])[0];
+    // O usuário já recebe uma linha própria no ledger; não pode entrar duas
+    // vezes caso tenha virado a principal estrela do elenco.
+    if (time.nome === jogador.time.nome && nome === jogador.nome) return null;
+    return {
+    id: `estrela-${time.slug}`, nome, time: time.nome,
+    imagem: time.imagem, defesaBase: Math.round(time.forca * .78 + (indice % 5)),
+    calouro: false, jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0,
+    };
+  }).filter(Boolean);
+  const calouros = TIMES.flatMap((time) => (time.jogadores || []).filter((atleta) => atleta.calouro).slice(0, 2).map((atleta) => ({
+    id: `calouro-${atleta.id}`, nome: atleta.nome, time: time.nome, imagem: time.imagem,
+    defesaBase: atleta.overall * .72, calouro: true, jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0,
+  })));
+  if ((jogador.temporadasNba || 0) === 0) calouros.push({ id: "voce-roy", nome: jogador.nome, time: jogador.time.nome, imagem: jogador.time.imagem, voce: true, calouro: true, defesaBase: jogador.atual.defesa || 70, jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 });
+  estrelas.push({ id: "voce", nome: jogador.nome, time: jogador.time.nome, imagem: jogador.time.imagem, voce: true, calouro: false, defesaBase: jogador.atual.defesa || 70, jogos: 0, pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 });
+  return { equipes, candidatos: [...estrelas, ...calouros.filter((c) => !c.voce)], calouros };
+}
+
+function registrarLinhaLedger(linha, venceu, pontosPro, pontosContra, mes) {
+  linha.jogos++; linha.vitorias += venceu ? 1 : 0; linha.derrotas += venceu ? 0 : 1;
+  linha.pontosPro += pontosPro; linha.pontosContra += pontosContra;
+  linha.forma.push(venceu ? "V" : "D"); if (linha.forma.length > 10) linha.forma.shift();
+  const mensal = linha.meses[mes];
+  mensal.jogos++; mensal.vitorias += venceu ? 1 : 0; mensal.derrotas += venceu ? 0 : 1; mensal.pontosPro += pontosPro; mensal.pontosContra += pontosContra;
+}
+
+function adicionarStatsCandidato(candidato, time, stats) {
+  if (!candidato || candidato.time !== time.nome) return;
+  candidato.jogos++; ["pontos", "rebotes", "assistencias", "roubos", "tocos"].forEach((chave) => { candidato[chave] += stats[chave] || 0; });
+}
+
+function statsSinteticosDaEstrela(time, venceu) {
+  const fator = time.forca / 82;
+  return { pontos: 18 + fator * 7 + Math.random() * 8 + (venceu ? 2 : 0), rebotes: 4 + Math.random() * 5, assistencias: 3 + Math.random() * 5, roubos: .6 + Math.random() * 1.8, tocos: .2 + Math.random() * 1.8 };
+}
+
+function registrarJogoNoLedger(temporada, casa, fora, venceuCasa, pontosCasa, pontosFora, mes, statsUsuario) {
+  const ledger = temporada.ledger;
+  registrarLinhaLedger(ledger.equipes[casa.nome], venceuCasa, pontosCasa, pontosFora, mes);
+  registrarLinhaLedger(ledger.equipes[fora.nome], !venceuCasa, pontosFora, pontosCasa, mes);
+  [casa, fora].forEach((time) => {
+    const venceu = time.nome === casa.nome ? venceuCasa : !venceuCasa;
+    ledger.candidatos.filter((c) => c.time === time.nome && !c.calouro).forEach((c) => {
+      adicionarStatsCandidato(c, time, statsUsuario && c.voce ? statsUsuario.stats : statsSinteticosDaEstrela(time, venceu));
+    });
+    ledger.calouros.filter((c) => c.time === time.nome).forEach((c) => {
+      adicionarStatsCandidato(c, time, statsUsuario && c.voce ? statsUsuario.stats : statsSinteticosDaEstrela(time, venceu));
+    });
+  });
+}
+
+function mediaCandidato(candidato, chave) { return (candidato[chave] || 0) / Math.max(1, candidato.jogos); }
+
+function corridaPremiosDoLedger(temporada) {
+  const ledger = temporada.ledger;
+  const campanha = (nome) => { const e = ledger.equipes[nome]; return e && e.jogos ? e.vitorias / e.jogos : .5; };
+  const pontuar = (candidato, categoria) => {
+    const pontos = mediaCandidato(candidato, "pontos"), rebotes = mediaCandidato(candidato, "rebotes"), assistencias = mediaCandidato(candidato, "assistencias"), roubos = mediaCandidato(candidato, "roubos"), tocos = mediaCandidato(candidato, "tocos");
+    if (categoria === "dpoy") return candidato.defesaBase * .55 + rebotes * .8 + (roubos + tocos) * 8 + campanha(candidato.time) * 18;
+    if (categoria === "roy") return pontos + rebotes * .9 + assistencias * 1.15 + (roubos + tocos) * 2 + campanha(candidato.time) * 8;
+    return pontos + rebotes * 1.15 + assistencias * 1.45 + (roubos + tocos) * 2.5 + campanha(candidato.time) * 18;
+  };
+  const listar = (fonte, categoria) => fonte.map((c) => ({ ...c, impacto: +pontuar(c, categoria).toFixed(2) })).sort((a, b) => b.impacto - a.impacto || b.jogos - a.jogos).slice(0, 10);
+  const mvp = listar(ledger.candidatos, "mvp"), dpoy = listar(ledger.candidatos, "dpoy"), roy = listar(ledger.calouros, "roy");
+  return { mvp, dpoy, roy, allStar: mvp.slice(0, 10) };
+}
+
+// Saves criados antes do ledger continuam jogáveis. Reconstruímos um ponto de
+// partida com os registros já existentes, sem re-sortear os jogos passados.
+function garantirLedgerDaTemporada(jogador, temporada) {
+  if (temporada.ledger) return;
+  temporada.ledger = criarLedgerDaLiga(jogador);
+  TIMES.forEach((time) => {
+    const registro = temporada.registros && temporada.registros[time.nome];
+    if (!registro) return;
+    const linha = temporada.ledger.equipes[time.nome];
+    linha.jogos = registro.jogos || 0; linha.vitorias = registro.vitorias || 0; linha.derrotas = registro.derrotas || 0;
+    linha.pontosPro = linha.jogos * (101 + (time.forca - 75) * .95);
+    linha.pontosContra = linha.jogos * (118 - (time.forca - 75) * .72);
+  });
+  (temporada.jogos || []).filter((jogo) => jogo.resolvido && jogo.stats).forEach((jogo) => {
+    temporada.ledger.candidatos.filter((c) => c.voce).forEach((c) => adicionarStatsCandidato(c, jogador.time, jogo.stats));
+    temporada.ledger.calouros.filter((c) => c.voce).forEach((c) => adicionarStatsCandidato(c, jogador.time, jogo.stats));
+  });
+}
+
+function calcularMediasParciais(jogos) {
+  const disputados = jogos.filter((j) => j.resolvido && j.stats);
+  const total = Math.max(1, disputados.length);
+  const media = (chave) => +(disputados.reduce((soma, jogo) => soma + (jogo.stats[chave] || 0), 0) / total).toFixed(1);
+  return {
+    pontos: media("pontos"), rebotes: media("rebotes"), assistencias: media("assistencias"), roubos: media("roubos"), tocos: media("tocos"),
+    arremessosConvertidos: media("arremessosConvertidos"), arremessosTentados: media("arremessosTentados"),
+    tresConvertidas: media("tresConvertidas"), tresTentadas: media("tresTentadas"),
+    lancesLivresConvertidos: media("lancesLivresConvertidos"), lancesLivresTentados: media("lancesLivresTentados"),
+    turnovers: media("turnovers"), minutos: media("minutos"),
+  };
+}
+
+function montarTabelaProgressiva(jogador, registros, jogos, ledger) {
+  const pontosTime = jogos.filter((j) => j.resolvido).reduce((soma, jogo) => soma + (jogo.pontosTime || 0), 0);
+  const pontosContra = jogos.filter((j) => j.resolvido).reduce((soma, jogo) => soma + (jogo.pontosAdversario || 0), 0);
+  const jogosTime = Math.max(1, registros[jogador.time.nome].jogos);
+  const tabela = TIMES.map((time) => {
+    const registro = registros[time.nome];
+    const eDoJogador = time.nome === jogador.time.nome;
+    const linhaLedger = ledger && ledger.equipes[time.nome];
+    return {
+      time,
+      vitorias: registro.vitorias,
+      derrotas: registro.derrotas,
+      winPct: registro.jogos ? registro.vitorias / registro.jogos : 0,
+      ataque: +(linhaLedger && linhaLedger.jogos ? linhaLedger.pontosPro / linhaLedger.jogos : eDoJogador ? pontosTime / jogosTime : 101 + (time.forca - 75) * .95).toFixed(1),
+      defesa: +(linhaLedger && linhaLedger.jogos ? linhaLedger.pontosContra / linhaLedger.jogos : eDoJogador ? pontosContra / jogosTime : 118 - (time.forca - 75) * .72).toFixed(1),
+    };
+  });
+  tabela.sort((a, b) => b.winPct - a.winPct || b.vitorias - a.vitorias || a.time.nome.localeCompare(b.time.nome));
+  tabela.forEach((linha, indice) => { linha.posicao = indice + 1; });
+  [...tabela].sort((a, b) => b.ataque - a.ataque).forEach((linha, indice) => { linha.rankingAtaque = indice + 1; });
+  [...tabela].sort((a, b) => a.defesa - b.defesa).forEach((linha, indice) => { linha.rankingDefesa = indice + 1; });
+  ["Leste", "Oeste"].forEach((conferencia) => {
+    tabela.filter((linha) => linha.time.conferencia === conferencia)
+      .sort((a, b) => b.winPct - a.winPct || b.vitorias - a.vitorias || a.time.nome.localeCompare(b.time.nome))
+      .forEach((linha, indice) => { linha.posicaoConferencia = indice + 1; linha.vagaPlayoff = indice < VAGAS_POR_CONFERENCIA; });
+  });
+  return tabela;
+}
+
+function criarAgendaDaTemporada(jogador) {
+  const agenda = Array.from({ length: JOGOS_POR_TEMPORADA }, (_, indice) => {
+    const adversario = escolherAdversario(jogador.time);
+    const rivalPessoal = Boolean(jogador.rivalVivo && jogador.rivalVivo.timeNome === adversario.nome);
+    return {
+      adversario,
+      rivalPessoal,
+      rivalidade: rivalPessoal || (jogador.time.rivais || []).includes(adversario.nome),
+      pressao: Math.min(30, (jogador.pressao || 0) + (rivalPessoal ? 18 : (jogador.time.rivais || []).includes(adversario.nome) ? 12 : 0)),
+      mes: MESES_TEMPORADA[Math.min(MESES_TEMPORADA.length - 1, Math.floor(indice / 12))],
+      resolvido: false,
+    };
+  });
+  if (jogador.rivalVivo) {
+    const rival = TIMES.find((time) => time.nome === jogador.rivalVivo.timeNome);
+    if (rival && rival.nome !== jogador.time.nome) {
+      [15, 57].forEach((indice) => {
+        agenda[indice] = { ...agenda[indice], adversario: rival, rivalPessoal: true, rivalidade: true, pressao: Math.min(30, (jogador.pressao || 0) + 18) };
+      });
+    }
+  }
+  return agenda;
+}
+
+function atualizarOutrosJogosDaRodada(temporada, timeJogador, adversarioJogador, venceuJogador, pontosTime, pontosAdversario, mes, statsUsuario) {
+  const registros = temporada.registros;
+  if (venceuJogador) registrarResultado(registros, timeJogador.nome, adversarioJogador.nome);
+  else registrarResultado(registros, adversarioJogador.nome, timeJogador.nome);
+  registrarJogoNoLedger(temporada, timeJogador, adversarioJogador, venceuJogador, pontosTime, pontosAdversario, mes, statsUsuario);
+  const restantes = TIMES.filter((time) => time.nome !== timeJogador.nome && time.nome !== adversarioJogador.nome)
+    .sort(() => Math.random() - .5);
+  for (let indice = 0; indice < restantes.length; indice += 2) {
+    const casa = restantes[indice];
+    const fora = restantes[indice + 1];
+    const venceuCasa = Math.random() < chanceVitoria(casa.forca, fora.forca);
+    registrarResultado(registros, venceuCasa ? casa.nome : fora.nome, venceuCasa ? fora.nome : casa.nome);
+    const pontosCasa = Math.round(96 + casa.forca * .32 + Math.random() * 18);
+    const pontosFora = Math.max(78, pontosCasa + (venceuCasa ? -(3 + Math.floor(Math.random() * 13)) : 3 + Math.floor(Math.random() * 13)));
+    registrarJogoNoLedger(temporada, casa, fora, venceuCasa, pontosCasa, pontosFora, mes, null);
+  }
+}
+
+function atualizarResumoProgressivo(jogador, temporada) {
+  garantirLedgerDaTemporada(jogador, temporada);
+  const tabela = montarTabelaProgressiva(jogador, temporada.registros, temporada.jogos, temporada.ledger);
+  const linha = tabela.find((entrada) => entrada.time.nome === jogador.time.nome);
+  temporada.tabelaCompleta = tabela;
+  temporada.vitorias = linha.vitorias;
+  temporada.derrotas = linha.derrotas;
+  temporada.medias = calcularMediasParciais(temporada.jogos);
+  const disputados = temporada.jogos.filter((j) => j.resolvido && j.stats);
+  temporada.jogosJogados = disputados.length;
+  temporada.mvpsDePartida = disputados.filter((j) => j.desempenhoJogo >= LIMIAR_MVP_PARTIDA).length;
+  temporada.desempenhoMedio = Math.round(disputados.reduce((soma, jogo) => soma + jogo.desempenhoJogo, 0) / Math.max(1, disputados.length));
+  temporada.classificacao = { posicao: linha.posicao, posicaoConferencia: linha.posicaoConferencia, conferencia: jogador.time.conferencia, vagaPlayoff: linha.vagaPlayoff, vitorias: linha.vitorias, derrotas: linha.derrotas };
+  temporada.estatisticasTime = { ataque: linha.ataque, defesa: linha.defesa, rankingAtaque: linha.rankingAtaque, rankingDefesa: linha.rankingDefesa, aproveitamento: +(linha.winPct * 100).toFixed(1) };
+  temporada.tabelasConferencia = { Leste: resumoConferencia(tabela, "Leste"), Oeste: resumoConferencia(tabela, "Oeste") };
+  temporada.calendarioMensal = resumirCalendarioMensal(temporada.jogos.filter((j) => j.resolvido));
+  temporada.ledgerResumo = Object.fromEntries(TIMES.map((time) => {
+    const linhaLedger = temporada.ledger.equipes[time.nome];
+    return [time.nome, { forma: [...linhaLedger.forma], meses: linhaLedger.meses }];
+  }));
+  temporada.corridaPremios = corridaPremiosDoLedger(temporada);
+  return temporada;
+}
+
+function criarTemporadaProgressiva(jogador) {
+  if (jogador.contexto !== "nba" || !jogador.time) return null;
+  const temporada = {
+    progressiva: true,
+    jogos: criarAgendaDaTemporada(jogador),
+    registros: criarRegistrosDaLiga(),
+    ledger: criarLedgerDaLiga(jogador),
+    proximoIndice: 0,
+    vitorias: 0,
+    derrotas: 0,
+    medias: { pontos: 0, rebotes: 0, assistencias: 0, roubos: 0, tocos: 0 },
+    mvpsDePartida: 0,
+    desempenhoMedio: 0,
+    jogosJogados: 0,
+    playoffs: null,
+    premios: null,
+    draft: null,
+    mundoLiga: null,
+    historicoLiga: null,
+    noiteHistoricaRealizada: false,
+    finalizada: false,
+  };
+  return atualizarResumoProgressivo(jogador, temporada);
+}
+
+function resolverProximoJogoDaTemporada(jogador, temporada, decisao) {
+  if (!temporada || !temporada.progressiva || temporada.finalizada) return null;
+  garantirLedgerDaTemporada(jogador, temporada);
+  const indice = temporada.proximoIndice;
+  const jogo = temporada.jogos[indice];
+  if (!jogo) return null;
+  // A decisão é recebida antes de qualquer rolagem. O resultado, as
+  // estatísticas e a campanha da liga nascem dela — nunca são remendados
+  // depois do placar.
+  const escolha = typeof decisao === "string" ? { preparacao: decisao } : (decisao || {});
+  const preparacao = escolha.preparacao || null;
+  const abordagem = escolha.abordagem || "equilibrado";
+  const minutos = escolha.minutos || "normal";
+  const matchup = escolha.matchup || "padrao";
+  const clutch = escolha.clutch || null;
+  const clutchInfo = escolha.clutchInfo || null;
+  const ajustePreparacao = preparacao === "treino" ? 5 : preparacao === "filme" ? 2 : preparacao === "descanso" ? 1 : 0;
+  if (preparacao === "treino") jogador.energia = Math.max(0, jogador.energia - 3);
+  if (preparacao === "filme") jogador.energia = Math.max(0, jogador.energia - 1);
+  if (preparacao === "descanso") jogador.energia = Math.min(100, jogador.energia + 5);
+  // Recuperação é uma consequência real: a partida acontece, mas sem o
+  // jogador. A escolha de voltar cedo mantém risco de agravamento abaixo.
+  if (jogador.lesaoAtiva && jogador.lesaoAtiva.jogosRestantes > 0) {
+    const forcaSemJogador = jogador.time.forca - 4;
+    const venceu = Math.random() < chanceVitoria(forcaSemJogador, jogo.adversario.forca);
+    const pontosTime = Math.round(92 + forcaSemJogador * .32 + Math.random() * 18);
+    const pontosAdversario = Math.max(78, pontosTime + (venceu ? -(3 + Math.floor(Math.random() * 13)) : 3 + Math.floor(Math.random() * 13)));
+    jogador.lesaoAtiva.jogosRestantes--;
+    if (!jogador.lesaoAtiva.jogosRestantes) jogador.lesaoAtiva = null;
+    Object.assign(jogo, { venceu, pontosTime, pontosAdversario, stats: null, fora: true, motivoAusencia: "recuperação médica", desempenhoJogo: 0, preparacaoAplicada: preparacao, resolvido: true });
+    atualizarOutrosJogosDaRodada(temporada, jogador.time, jogo.adversario, venceu, pontosTime, pontosAdversario, jogo.mes, null);
+    temporada.proximoIndice++;
+    atualizarResumoProgressivo(jogador, temporada);
+    return jogo;
+  }
+  const efeitoPressao = jogo.pressao > 15 ? (Math.random() < .52 ? -Math.round(jogo.pressao * .28) : Math.round(jogo.pressao * .17)) : Math.round(jogo.pressao * .1);
+  const ajusteAbordagem = abordagem === "agressivo" ? 3 : abordagem === "coletivo" ? 1 : abordagem === "defensivo" ? 2 : 0;
+  const ajusteMinutos = minutos === "carga" ? 4 : minutos === "controle" ? -2 : 0;
+  const ajusteMatchup = matchup === "estrela" ? 2 : matchup === "proteger-aro" ? 1 : 0;
+  const ajusteClutch = clutch === "isolar" ? (jogador.atual.criacao + jogador.atual.arremesso) / 35 - 4 : clutch === "pick" ? (jogador.atual.criacao + jogador.atual.qiBasquete) / 36 - 4 : clutch === "infiltrar" ? jogador.atual.atletismo / 19 - 4 : clutch === "passe" ? jogador.atual.qiBasquete / 21 - 4 : 0;
+  if (minutos === "carga") jogador.energia = Math.max(0, jogador.energia - 5);
+  if (minutos === "controle") jogador.energia = Math.min(100, jogador.energia + 2);
+  const agravou = jogador.lesaoAtiva && jogador.lesaoAtiva.riscoRetorno && Math.random() < .22;
+  if (agravou) jogador.lesaoAtiva = { jogosRestantes: 6 + Math.floor(Math.random() * 8), riscoRetorno: false, descricao: "agravamento após retorno antecipado" };
+  const penalidadeLesao = agravou ? 13 : jogador.lesaoAtiva && jogador.lesaoAtiva.riscoRetorno ? 4 : 0;
+  const desempenhoJogo = Math.max(35, Math.min(100, simularDesempenho(jogador) + efeitoPressao + ajustePreparacao + ajusteAbordagem + ajusteMinutos + ajusteMatchup + ajusteClutch - penalidadeLesao));
+  const forcaJogador = forcaEfetivaJogador(jogador) + (preparacao === "filme" ? .8 : preparacao === "treino" ? .5 : 0) + (abordagem === "coletivo" ? 1.4 : abordagem === "agressivo" ? .8 : 0) + (matchup === "estrela" ? .7 : matchup === "proteger-aro" ? .45 : 0) + ajusteMinutos * .35;
+  const noiteHistorica = sortearNoiteHistorica(jogador, desempenhoJogo, temporada.noiteHistoricaRealizada);
+  if (noiteHistorica) temporada.noiteHistoricaRealizada = true;
+  let venceu = noiteHistorica ? Math.random() < .93 : Math.random() < chanceVitoria(forcaJogador, jogo.adversario.forca);
+  const stats = estatisticasDoJogo(jogador, desempenhoJogo);
+  if (noiteHistorica) aplicarNoiteHistorica(stats, noiteHistorica);
+  if (preparacao === "filme") { stats.assistencias *= 1.08; stats.roubos *= 1.1; }
+  if (preparacao === "treino") stats.pontos *= 1.06;
+  if (abordagem === "agressivo") { stats.pontos *= 1.16; stats.assistencias *= .88; }
+  if (abordagem === "coletivo") { stats.pontos *= .9; stats.assistencias *= 1.2; }
+  if (abordagem === "defensivo") { stats.roubos *= 1.35; stats.tocos *= 1.35; stats.rebotes *= 1.1; }
+  if (minutos === "carga") Object.keys(stats).forEach((chave) => { stats[chave] *= 1.1; });
+  if (minutos === "controle") Object.keys(stats).forEach((chave) => { stats[chave] *= .88; });
+  if (matchup === "estrela") { stats.roubos *= 1.2; stats.assistencias *= 1.05; }
+  if (matchup === "proteger-aro") { stats.tocos *= 1.4; stats.rebotes *= 1.1; }
+  Object.keys(stats).forEach((chave) => { stats[chave] = +stats[chave].toFixed(1); });
+  let pontosTime = Math.round(96 + forcaJogador * .32 + Math.random() * 18);
+  let pontosAdversario = Math.max(78, pontosTime + (venceu ? -(3 + Math.floor(Math.random() * 13)) : 3 + Math.floor(Math.random() * 13)));
+  let clutchResultado = null;
+  if (clutch && clutchInfo) {
+    const estadoMental = ((jogador.energia || 50) - 50) / 260 + ((jogador.confiancaTecnico || 50) - 50) / 300 + ((jogador.apoioTorcida || 50) - 50) / 420 + ((jogador.reputacao || 50) - 50) / 500;
+    const sucesso = Math.random() < Math.max(.18, Math.min(.84, .46 + ajusteClutch / 18 + estadoMental));
+    const pontosDaPosse = clutch === "isolar" && Math.random() < .34 ? 3 : 2;
+    pontosAdversario = clutchInfo.placarAdversario;
+    pontosTime = sucesso ? clutchInfo.placarSeu + pontosDaPosse : clutchInfo.placarSeu;
+    if (pontosTime === pontosAdversario) { pontosTime += sucesso ? 4 : 0; pontosAdversario += sucesso ? 2 : 1; }
+    if (!sucesso && Math.random() < .35) pontosAdversario += 2;
+    venceu = pontosTime > pontosAdversario;
+    clutchResultado = { sucesso, tipo: clutch, segundos: clutchInfo.segundos, pontosDaPosse };
+  }
+  Object.assign(jogo, { venceu, pontosTime, pontosAdversario, stats, noiteHistorica, desempenhoJogo, preparacaoAplicada: preparacao, decisaoAplicada: { abordagem, minutos, matchup, clutch }, clutchResultado, agravouLesao: agravou, resolvido: true });
+  jogador.time.rivalidadesDinamicas = jogador.time.rivalidadesDinamicas || {};
+  const margem = Math.abs(pontosTime - pontosAdversario);
+  if (jogo.rivalidade || margem <= 4) {
+    jogador.time.rivalidadesDinamicas[jogo.adversario.nome] = (jogador.time.rivalidadesDinamicas[jogo.adversario.nome] || 0) + (jogo.rivalidade ? 2 : 1);
+    if (jogador.time.rivalidadesDinamicas[jogo.adversario.nome] >= 6 && !jogador.time.rivais.includes(jogo.adversario.nome)) jogador.time.rivais.push(jogo.adversario.nome);
+  }
+  atualizarOutrosJogosDaRodada(temporada, jogador.time, jogo.adversario, venceu, pontosTime, pontosAdversario, jogo.mes, { time: jogador.time.nome, stats });
+  temporada.proximoIndice++;
+  atualizarResumoProgressivo(jogador, temporada);
+  return jogo;
+}
+
+function finalizarTemporadaProgressiva(jogador, temporada) {
+  if (!temporada || !temporada.progressiva || temporada.finalizada || temporada.proximoIndice < JOGOS_POR_TEMPORADA) return temporada;
+  const tabela = temporada.tabelaCompleta;
+  const resultadoPlayoffs = simularPlayoffsLiga(tabela, jogador);
+  temporada.playoffs = tabela.find((linha) => linha.time.nome === jogador.time.nome).vagaPlayoff
+    ? { ...resultadoPlayoffs.caminhoJogador, series: resultadoPlayoffs.seriesJogador, chaveCompleta: resultadoPlayoffs.chaveCompleta, campeaoLeste: resultadoPlayoffs.campeaoLeste, campeaoOeste: resultadoPlayoffs.campeaoOeste }
+    : null;
+  temporada.chavePlayoffs = resultadoPlayoffs.chaveCompleta;
+  temporada.draft = gerarDraftAnual(tabela);
+  temporada.premios = calcularPremiosDoLedger(temporada, resultadoPlayoffs);
+  temporada.comparacaoPosicao = compararComTitularesDaPosicao(jogador, temporada.medias);
+  atualizarForcasAposTemporada(tabela, temporada.draft);
+  temporada.mundoLiga = global.CB && global.CB.avancarMundoLiga ? global.CB.avancarMundoLiga(temporada.draft) : null;
+  temporada.historicoLiga = global.CB && global.CB.registrarHistoricoLiga ? global.CB.registrarHistoricoLiga({ ...temporada.premios, draft: temporada.draft }) : null;
+  temporada.finalizada = true;
+  return temporada;
+}
+
+// Caminho automático do mesmo motor progressivo. Assim, jogo a jogo,
+// automático e carreira completa registram exatamente o mesmo calendário,
+// ledger, tabela, playoffs, draft e prêmios; só muda quem aciona as rodadas.
+function resolverTemporadaAutomatica(jogador) {
+  const temporada = criarTemporadaProgressiva(jogador);
+  if (!temporada) return null;
+  while (temporada.proximoIndice < JOGOS_POR_TEMPORADA) {
+    resolverProximoJogoDaTemporada(jogador, temporada, { abordagem: "equilibrado", minutos: "normal", matchup: "padrao", descanso: "normal" });
+  }
+  return finalizarTemporadaProgressiva(jogador, temporada);
+}
+
+function calcularPremiosDoLedger(temporada, resultadoPlayoffs) {
+  const corrida = corridaPremiosDoLedger(temporada);
+  const mvp = corrida.mvp[0];
+  const dpoy = corrida.dpoy[0];
+  const roy = corrida.roy[0];
+  const timeDe = (candidato) => TIMES.find((time) => time.nome === candidato.time);
+  // Sexto homem vem de atletas que não são a primeira estrela da franquia;
+  // o score permanece baseado no mesmo ledger de produção e campanha.
+  const sexto = corrida.mvp.find((c) => c.nome !== (timeDe(c) || {}).estrelas?.[0]) || corrida.mvp[1] || mvp;
+  const mapear = (lista) => lista.slice(0, 5).map((c) => ({ nome: c.nome, time: c.time, imagem: c.imagem, impacto: c.impacto }));
+  return {
+    mvpDaLiga: mvp.nome, mvpTime: timeDe(mvp), dpoyDaLiga: dpoy.nome, dpoyTime: timeDe(dpoy),
+    sextoHomemDaLiga: sexto.nome, sextoHomemTime: timeDe(sexto), novatoDoAno: roy ? roy.nome : "—", novatoTime: roy ? timeDe(roy) : null,
+    campeao: resultadoPlayoffs.campeao, campeaoNome: resultadoPlayoffs.campeao.nome, campeaoLeste: resultadoPlayoffs.campeaoLeste, campeaoOeste: resultadoPlayoffs.campeaoOeste,
+    candidatosOrdenados: corrida.mvp.map((c) => ({ nome: c.nome, impacto: c.impacto })),
+    candidatosDpoyOrdenados: corrida.dpoy.map((c) => ({ nome: c.nome, impacto: c.impacto })),
+    corridaPremios: { mvp: mapear(corrida.mvp), dpoy: mapear(corrida.dpoy), roy: mapear(corrida.roy), allStar: mapear(corrida.allStar) },
   };
 }
 
@@ -317,7 +795,7 @@ function simularChaveConferencia(seeds, nomeConf, jogador) {
   const seriesJogador = [];
   const chaveCompleta = [];
   let chave = paresPrimeiraRodada(seeds).map(([a, b]) => {
-    const vencedor = jogarSerie(a, b);
+    const vencedor = jogarSerie(a, b, jogador);
     caminho = rastrearEliminacao(jogador, a, b, vencedor, RODADAS[0], caminho);
     registrarSerieJogador(jogador, a, b, vencedor, RODADAS[0], seriesJogador);
     registrarSerieChave(a, b, vencedor, RODADAS[0], nomeConf, chaveCompleta);
@@ -330,14 +808,14 @@ function simularChaveConferencia(seeds, nomeConf, jogador) {
     [chave[2], chave[3]],
   ];
   chave = semis.map(([a, b]) => {
-    const vencedor = jogarSerie(a, b);
+    const vencedor = jogarSerie(a, b, jogador);
     caminho = rastrearEliminacao(jogador, a, b, vencedor, RODADAS[1], caminho);
     registrarSerieJogador(jogador, a, b, vencedor, RODADAS[1], seriesJogador);
     registrarSerieChave(a, b, vencedor, RODADAS[1], nomeConf, chaveCompleta);
     return vencedor;
   });
 
-  const campeaoConf = jogarSerie(chave[0], chave[1]);
+  const campeaoConf = jogarSerie(chave[0], chave[1], jogador);
   caminho = rastrearEliminacao(jogador, chave[0], chave[1], campeaoConf, RODADAS[2], caminho);
   registrarSerieJogador(jogador, chave[0], chave[1], campeaoConf, RODADAS[2], seriesJogador);
   registrarSerieChave(chave[0], chave[1], campeaoConf, RODADAS[2], nomeConf, chaveCompleta);
@@ -355,7 +833,7 @@ function simularPlayoffsLiga(tabela, jogador) {
   let caminhoJogador = leste.caminho || oeste.caminho;
   const seriesJogador = [...leste.seriesJogador, ...oeste.seriesJogador];
 
-  const campeao = jogarSerie(leste.campeao, oeste.campeao);
+  const campeao = jogarSerie(leste.campeao, oeste.campeao, jogador);
   caminhoJogador = rastrearEliminacao(
     jogador,
     leste.campeao,
@@ -742,7 +1220,13 @@ function simularTemporadaCompleta(jogador) {
 
 const api = {
   simularTemporadaCompleta,
+  criarTemporadaProgressiva,
+  resolverTemporadaAutomatica,
+  resolverProximoJogoDaTemporada,
+  finalizarTemporadaProgressiva,
   estatisticasDoJogo,
+  sortearNoiteHistorica,
+  aplicarNoiteHistorica,
   probabilidadeVitoria,
   gerarOrdemDraftLoteria,
   gerarDraftAnual,
