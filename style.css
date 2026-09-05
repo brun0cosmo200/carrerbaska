@@ -1746,3 +1746,8 @@ body.draft-lenda-trocando::after { animation: cenárioLenda .48s ease both; }
 .tela-final .acoes-stack { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
 .tela-final .acoes-stack button.acao { width:auto; min-height:44px; margin:0; padding:10px 14px; font-size:.65rem; box-shadow:none; }
 @media(max-width:560px) { .carta-lenda.tela-final { padding:18px 14px; margin:12px auto; }.tela-final .estatisticas-finais>div { grid-template-columns:repeat(2,minmax(0,1fr)); }.tela-final .vitrine-titulos>div { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.instalar-app { margin-left:auto; padding:9px 12px; border:1px solid #ffffff35; border-radius:8px; background:#1d428a; color:#fff; font:600 .75rem var(--font-body); cursor:pointer; }
+.instalar-app[hidden] { display:none; }
+.instalar-app:focus-visible { outline:2px solid #ffcc00; outline-offset:3px; }
+@media(max-width:560px) { .instalar-app { padding:8px; font-size:.65rem; }.app-header:has(.instalar-app:not([hidden])) .brand-stripe { display:none; } }
