@@ -364,7 +364,7 @@ function desenharCartaCarreira(canvas, resumo) {
 
   ctx.fillStyle = "#c8102e";
   ctx.font = "700 18px DM Sans, sans-serif";
-  ctx.fillText("BASKA · CARREIRA NBA", 40, 48);
+  ctx.fillText("carrer baska · CARREIRA NBA", 40, 48);
 
   ctx.fillStyle = "#ffffff";
   ctx.font = "400 64px Anton, sans-serif";
@@ -434,7 +434,7 @@ function desenharCartaCarreira(canvas, resumo) {
 
   ctx.fillStyle = "#5c6a82";
   ctx.font = "500 14px DM Sans, sans-serif";
-  ctx.fillText("thefenomeno vibes · baska career card", 40, h - 36);
+  ctx.fillText("carrer baska · career card", 40, h - 36);
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -487,7 +487,7 @@ async function copiarResumoCarreira(resumo) {
     `Pico ${resumo.pico} · Anéis ${p.aneis || 0} · MVP ${p.mvp || 0} · All-Star ${p.allStar || 0}`,
     `All-NBA ${p.allNba || 0} · DPOY ${p.dpoy || 0} · Temporadas NBA ${resumo.temporadasNba}`,
     `Times: ${(resumo.times || []).map((t) => t.nome).join(", ") || resumo.timeFinal}`,
-    `Joguei no Baska.`,
+    `Joguei no carrer baska.`,
   ].join("\n");
   if (navigator.clipboard && navigator.clipboard.writeText) {
     await navigator.clipboard.writeText(texto);
