@@ -59,7 +59,7 @@ function request(relative, mode = 'cors') {
   assert(!stores.has('carrer-baska-old'));
   assert.equal(await (await request('img/times/boston-celtics.png')).text(), 'network asset');
   online = false;
-  assert((await (await request('./', 'navigate')).text()).includes('carrer baska'));
+  assert((await (await request('./', 'navigate')).text()).includes('Carreira Baska'));
   assert((await (await request('pro.js')).text()).length > 1000);
   assert.equal(await (await request('img/times/boston-celtics.png')).text(), 'network asset');
   assert.equal(request('https://another.test/asset.js'), undefined);
