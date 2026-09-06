@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">carrer baska</string>
+    <string name="title_activity_main">carrer baska</string>
+    <string name="package_name">io.github.brun0cosmo200.carrerbaska</string>
+    <string name="custom_url_scheme">io.github.brun0cosmo200.carrerbaska</string>
+</resources>

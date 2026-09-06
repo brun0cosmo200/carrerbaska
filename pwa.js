@@ -1,4 +1,6 @@
 (() => {
+  // O app Android recebe os arquivos pelo pacote; o cache PWA é só do site.
+  if (window.Capacitor?.isNativePlatform()) return;
   const button = document.getElementById('instalar-app');
   let installPrompt;
   window.addEventListener('beforeinstallprompt', (event) => {

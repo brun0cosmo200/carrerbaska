@@ -2,3 +2,6 @@ dist/
 .site-package/
 *.tar.gz
 node_modules/
+*.jks
+*.keystore
+keystore.properties
