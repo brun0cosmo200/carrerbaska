@@ -1753,8 +1753,8 @@ body.draft-lenda-trocando::after { animation: cenárioLenda .48s ease both; }
 @media(max-width:560px) { .instalar-app { padding:8px; font-size:.65rem; }.app-header:has(.instalar-app:not([hidden])) .brand-stripe { display:none; } }
 
 .app-header { flex-wrap:wrap; gap:12px; }
-.instagram-criador { display:inline-flex; align-items:center; gap:7px; min-height:44px; margin-left:auto; padding:8px 12px; border:1px solid #ffffff24; border-radius:9px; color:#e9edf5; text-decoration:none; font:600 .78rem var(--font-body); transition:background .15s,border-color .15s; }
-.instagram-criador svg { flex-shrink:0; color:#ed729d; }
-.instagram-criador:hover { background:#ed729d12; border-color:#ed729d88; }
-.instagram-criador:focus-visible { outline:2px solid #ed729d; outline-offset:3px; }
-@media(max-width:560px) { .instagram-criador { padding:7px 8px; font-size:.68rem; }.app-header .instalar-app:not([hidden]) { order:3; margin-left:auto; } }
+.instagram-criador { display:inline-flex; align-items:center; gap:5px; min-height:44px; margin-left:auto; padding:4px 0; color:#98a2b2; text-decoration:none; font:400 .7rem var(--font-body); white-space:nowrap; }
+.instagram-criador svg { width:14px; height:14px; flex-shrink:0; color:inherit; }
+.instagram-criador:hover { color:#e9edf5; text-decoration:underline; text-underline-offset:3px; }
+.instagram-criador:focus-visible { outline:2px solid #98a2b2; outline-offset:3px; border-radius:3px; }
+@media(max-width:560px) { .instagram-criador { font-size:.65rem; }.app-header .instalar-app:not([hidden]) { order:3; margin-left:auto; } }
